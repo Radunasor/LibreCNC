@@ -17,4 +17,30 @@ typedef enum
 } bool;
 #endif
 
+#define _malloc malloc
+#define _free free
+
+#ifdef NDEBUG
+
+#define LC_ASSERT(expr, msg)
+
+#else
+
+#define LC_ASSERT_HANDLER \
+    while (1)             \
+        ;
+
+// todo : need to change printf with LOG_CRITICAL
+#define LC_ASSERT(expr, msg)                                                                         \
+    do                                                                                               \
+    {                                                                                                \
+        if (!(expr))                                                                                 \
+        {                                                                                            \
+            printf("Asserted: %s (%s, %s, %s, %d)\n", msg, #expr, __FILE__, __FUNCTION__, __LINE__); \
+            LC_ASSERT_HANDLER                                                                        \
+        }                                                                                            \
+    } while (0)
+
+#endif
+
 #endif
