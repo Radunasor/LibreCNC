@@ -23,6 +23,7 @@ typedef enum
 #ifdef NDEBUG
 
 #define LC_ASSERT(expr, msg)
+#define LC_RELEASE_BUILD
 
 #else
 
@@ -40,6 +41,8 @@ typedef enum
             LC_ASSERT_HANDLER                                                                        \
         }                                                                                            \
     } while (0)
+
+#define LC_DEBUG_BUILD
 
 #endif
 
