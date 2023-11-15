@@ -84,6 +84,8 @@ void lc_list_insert_back(lc_list_t *list, void *data)
 
 void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 {
+    LC_ASSERT(index < list->list_size, "list insert out of range");
+
     lc_list_node_t *new_node = _malloc(sizeof(lc_list_node_t));
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
@@ -91,6 +93,18 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
     memset(new_node, 0, sizeof(new_node));
 
     new_node->data = data;
+
+    lc_list_node_t *current_node_at_idx = lc_list_find_at(list, index);
+
+    new_node->next = current_node_at_idx;
+    new_node->prev = current_node_at_idx->prev;
+    current_node_at_idx->prev = new_node;
+
+    if (index == 0)
+        list->head = new_node;
+
+    if (index == list->list_size - 1)
+        list->tail = new_node;
 }
 
 void *lc_list_pop_front(lc_list_t *list)
