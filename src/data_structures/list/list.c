@@ -27,7 +27,7 @@ lc_list_t *lc_list_create()
 
     LC_ASSERT(list, "List memory allocation returned NULL.");
 
-    memset(list, 0, sizeof(list));
+    memset(list, 0, sizeof(lc_list_t));
 
     return list;
 }
@@ -43,7 +43,7 @@ void lc_list_insert_front(lc_list_t *list, void *data)
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
-    memset(new_node, 0, sizeof(new_node));
+    memset(new_node, 0, sizeof(lc_list_node_t));
 
     new_node->data = data;
 
@@ -68,7 +68,7 @@ void lc_list_insert_back(lc_list_t *list, void *data)
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
-    memset(new_node, 0, sizeof(new_node));
+    memset(new_node, 0, sizeof(lc_list_node_t));
 
     new_node->data = data;
 
@@ -95,7 +95,7 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
-    memset(new_node, 0, sizeof(new_node));
+    memset(new_node, 0, sizeof(lc_list_node_t));
 
     new_node->data = data;
 
