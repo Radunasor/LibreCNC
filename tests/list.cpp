@@ -32,7 +32,6 @@ protected:
     void convert_lclist_to_stdlist(std::list<void *> &stdlist, lc_list_t *list)
     {
         void *data_ptr = NULL;
-        // for (size_t i = 0; data_ptr = lc_list_find_at(list, i), data_ptr != NULL; i++)
         LIST_FOREACH(list, data_ptr)
         stdlist.push_front(data_ptr);
     }
