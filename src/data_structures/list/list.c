@@ -16,7 +16,6 @@ struct _lc_list_t
     lc_list_node_t *head;
     lc_list_node_t *tail;
 
-    lc_list_node_t *current_node;
     size_t list_size;
 };
 
@@ -131,6 +130,8 @@ void *lc_list_pop_front(lc_list_t *list)
         list->head = NULL;
         list->tail = NULL;
 
+        list->list_size = 0;
+
         return data;
     }
 
@@ -161,6 +162,8 @@ void *lc_list_pop_back(lc_list_t *list)
 
         list->head = NULL;
         list->tail = NULL;
+
+        list->list_size = 0;
 
         return data;
     }
