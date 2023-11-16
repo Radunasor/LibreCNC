@@ -59,6 +59,8 @@ void lc_list_insert_front(lc_list_t *list, void *data)
         list->head = new_node;
         list->tail = new_node;
     }
+
+    list->list_size += 1;
 }
 
 void lc_list_insert_back(lc_list_t *list, void *data)
@@ -82,6 +84,8 @@ void lc_list_insert_back(lc_list_t *list, void *data)
         list->head = new_node;
         list->tail = new_node;
     }
+
+    list->list_size += 1;
 }
 
 void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
@@ -107,6 +111,8 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
     if (index == list->list_size - 1)
         list->tail = new_node;
+
+    list->list_size += 1;
 }
 
 void *lc_list_pop_front(lc_list_t *list)
@@ -134,6 +140,8 @@ void *lc_list_pop_front(lc_list_t *list)
     list->head->prev = NULL;
 
     _free(ex_head);
+
+    list->list_size -= 1;
 
     return data;
 }
@@ -164,6 +172,8 @@ void *lc_list_pop_back(lc_list_t *list)
 
     _free(ex_tail);
 
+    list->list_size -= 1;
+
     return data;
 }
 
@@ -181,6 +191,8 @@ void *lc_list_pop_at(lc_list_t *list, size_t index)
     target_node->next->prev = target_node->prev;
 
     _free(target_node);
+
+    list->list_size -= 1;
 
     return data;
 }
