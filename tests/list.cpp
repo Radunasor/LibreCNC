@@ -18,5 +18,5 @@ TEST(List, InsertFront)
     lc_list_insert_front(mp_list, &i);
     int *j = (int *)lc_list_find_at(mp_list, 0);
 
-    EXPECT_TRUE(i == *j * 2);
+    EXPECT_TRUE(i == *j);
 }
