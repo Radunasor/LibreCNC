@@ -66,7 +66,7 @@ void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
 
     logger_sink_cb_t sink_cb = NULL;
 
-    LIST_LOOP(sink_cb_list, sink_cb)
+    LIST_FOREACH(sink_cb_list, sink_cb)
     sink_cb(level, formatted_text);
 }
 
