@@ -3,8 +3,7 @@
 #include "logger.h"
 #include "data_structures/list/list.h"
 
-lc_logger_log_level_t log_level = LC_CONF_LOG_LEVEL;
-lc_list_t *sink_cb_list = NULL;
+static lc_list_t *sink_cb_list = NULL;
 
 static void logger_default_sink(lc_logger_log_level_t level, const char *msg)
 {
@@ -61,7 +60,7 @@ void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
 
     va_list args;
     va_start(args, format);
-    vsnprintf(formatted_text, 256, format, args);
+    vsnprintf(formatted_text, sizeof(formatted_text), format, args);
     va_end(args);
 
     logger_sink_cb_t sink_cb = NULL;
