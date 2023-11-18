@@ -21,6 +21,26 @@ struct _lc_list_t
 
 #define LIST_INTERNAL_RANGELOOP(list, node) for (lc_list_node_t *node = list->head; node != NULL; node = node->next)
 
+static lc_list_node_t *lc_list_get_node(lc_list_t *list, size_t index)
+{
+    LC_ASSERT(index < list->list_size, "list insert out of range");
+
+    size_t tmp_idx = 0;
+    lc_list_node_t *node_ptr = NULL;
+
+    LIST_INTERNAL_RANGELOOP(list, node)
+    {
+        if (tmp_idx == index)
+        {
+            node_ptr = node;
+            break;
+        }
+        tmp_idx++;
+    }
+
+    return node_ptr;
+}
+
 lc_list_t *lc_list_create()
 {
     lc_list_t *list = _malloc(sizeof(lc_list_t));
@@ -99,7 +119,7 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
     new_node->data = data;
 
-    lc_list_node_t *current_node_at_idx = lc_list_find_at(list, index);
+    lc_list_node_t *current_node_at_idx = lc_list_get_node(list, index);
 
     new_node->next = current_node_at_idx;
     new_node->prev = current_node_at_idx->prev;
@@ -182,6 +202,8 @@ void *lc_list_pop_back(lc_list_t *list)
 
 void *lc_list_pop_at(lc_list_t *list, size_t index)
 {
+    LC_ASSERT(index < list->list_size, "list insert out of range");
+
     void *data = NULL;
 
     lc_list_node_t *target_node = lc_list_find_at(list, index);
@@ -208,8 +230,7 @@ void lc_list_clear(lc_list_t *list)
 
 void *lc_list_find_at(lc_list_t *list, size_t index)
 {
-    if (index >= list->list_size)
-        return NULL;
+    LC_ASSERT(index < list->list_size, "list insert out of range");
 
     size_t tmp_idx = 0;
 
