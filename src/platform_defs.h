@@ -32,15 +32,14 @@ typedef enum
     while (1)             \
         ;
 
-// todo : need to change printf with LOG_CRITICAL
-#define LC_ASSERT(expr, msg)                                                                               \
-    do                                                                                                     \
-    {                                                                                                      \
-        if (!(expr))                                                                                       \
-        {                                                                                                  \
-            LC_LOG_ERROR("Asserted: %s (%s, %s, %s, %d)\n", msg, #expr, __FILE__, __FUNCTION__, __LINE__); \
-            LC_ASSERT_HANDLER                                                                              \
-        }                                                                                                  \
+#define LC_ASSERT(expr, msg)                                                                                                  \
+    do                                                                                                                        \
+    {                                                                                                                         \
+        if (!(expr))                                                                                                          \
+        {                                                                                                                     \
+            LC_LOG_ERROR("[Asserted]: %s (expr: %s | file: %s:%d | func: %s)", msg, #expr, __FILE__, __LINE__, __FUNCTION__); \
+            LC_ASSERT_HANDLER                                                                                                 \
+        }                                                                                                                     \
     } while (0)
 
 #define LC_DEBUG_BUILD
