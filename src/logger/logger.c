@@ -3,7 +3,7 @@
 #include "logger.h"
 #include "data_structures/list/list.h"
 
-static lc_list_t *sink_cb_list = NULL;
+static logger_sink_cb_t _sink_cb = NULL;
 
 static void logger_default_sink(lc_logger_log_level_t level, const char *msg)
 {
@@ -31,26 +31,17 @@ static void logger_default_sink(lc_logger_log_level_t level, const char *msg)
         break;
     }
 
-    printf("[LOG %s]:\"%s\"", level_str, msg);
+    printf("[LOG %s]:\"%s\" \n", level_str, msg);
 }
 
 void lc_logger_init()
 {
-    if (sink_cb_list)
-        return;
-
-    sink_cb_list = lc_list_create();
-
-#ifdef LC_DEBUG_BUILD
-    if (sink_cb_list)
-        lc_logger_add_sink_cb(logger_default_sink);
-#endif
+    lc_logger_set_sink_cb(logger_default_sink);
 }
 
 void lc_logger_deinit()
 {
-    lc_list_destroy(sink_cb_list);
-    sink_cb_list = NULL;
+    _sink_cb = NULL;
 }
 
 void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
@@ -63,13 +54,11 @@ void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
     vsnprintf(formatted_text, sizeof(formatted_text), format, args);
     va_end(args);
 
-    logger_sink_cb_t sink_cb = NULL;
-
-    LIST_FOREACH(sink_cb_list, sink_cb)
-    sink_cb(level, formatted_text);
+    if (_sink_cb)
+        _sink_cb(level, formatted_text);
 }
 
-void lc_logger_add_sink_cb(logger_sink_cb_t sink_cb)
+void lc_logger_set_sink_cb(logger_sink_cb_t sink_cb)
 {
-    lc_list_insert_back(sink_cb_list, sink_cb);
+    _sink_cb = sink_cb;
 }
