@@ -6,13 +6,13 @@
 
 extern "C"
 {
-#define p(x) (void *)(x)
+#define VOID_PTR(x) (void *)(x)
 #include "data_structures/list/list.h"
 }
 
 std::list<std::list<void *>> test_data = {
-    {p(1), p(2), p(3), p(4), p(5)},
-    {p(6), p(5), p(4), p(3), p(2), p(1)},
+    {VOID_PTR(1), VOID_PTR(2), VOID_PTR(3), VOID_PTR(4), VOID_PTR(5)},
+    {VOID_PTR(6), VOID_PTR(5), VOID_PTR(4), VOID_PTR(3), VOID_PTR(2), VOID_PTR(1)},
     {},
 };
 
