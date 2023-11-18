@@ -123,6 +123,7 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
     new_node->next = current_node_at_idx;
     new_node->prev = current_node_at_idx->prev;
+    current_node_at_idx->prev->next = new_node;
     current_node_at_idx->prev = new_node;
 
     if (index == 0)
