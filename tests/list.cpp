@@ -13,6 +13,8 @@ extern "C"
 std::list<std::list<void *>> test_data = {
     {VOID_PTR(1), VOID_PTR(2), VOID_PTR(3), VOID_PTR(4), VOID_PTR(5)},
     {VOID_PTR(6), VOID_PTR(5), VOID_PTR(4), VOID_PTR(3), VOID_PTR(2), VOID_PTR(1)},
+    {VOID_PTR(6), VOID_PTR(5), VOID_PTR(4), VOID_PTR(3), VOID_PTR(2), VOID_PTR(1), VOID_PTR(0)},
+    {VOID_PTR(1)},
     {},
 };
 
