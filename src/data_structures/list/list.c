@@ -254,7 +254,7 @@ void *lc_list_find_at(lc_list_t *list, size_t index)
 
 size_t lc_list_get_index(lc_list_t *list, void *data)
 {
-    size_t tmp_idx = -1;
+    size_t tmp_idx = 0;
 
     LIST_INTERNAL_RANGELOOP(list, node)
     {
@@ -264,7 +264,7 @@ size_t lc_list_get_index(lc_list_t *list, void *data)
         tmp_idx++;
     }
 
-    return tmp_idx;
+    return -1;
 }
 
 size_t lc_list_get_size(lc_list_t *list)
