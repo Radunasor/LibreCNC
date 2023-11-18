@@ -92,6 +92,8 @@ TEST_P(LCList, insert_at)
     std::list<void *> converted_lclist;
     convert_lclist_to_stdlist(converted_lclist, lclist);
 
+    EXPECT_EQ(index, lc_list_get_index(lclist, lc_list_find_at(lclist, index)));
+
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
@@ -183,8 +185,6 @@ TEST_P(LCList, clear)
 }
 
 // void *lc_list_find_at(lc_list_t *list, size_t index);
-
-// size_t lc_list_get_index(lc_list_t *list, void *data);
 
 // size_t lc_list_get_size(lc_list_t *list);
 
