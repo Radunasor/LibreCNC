@@ -123,14 +123,14 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
     new_node->next = current_node_at_idx;
     new_node->prev = current_node_at_idx->prev;
-    current_node_at_idx->prev->next = new_node;
+
+    if (current_node_at_idx != list->head)
+        current_node_at_idx->prev->next = new_node;
+
     current_node_at_idx->prev = new_node;
 
-    if (index == 0)
+    if (current_node_at_idx == list->head)
         list->head = new_node;
-
-    if (index == list->list_size - 1)
-        list->tail = new_node;
 
     list->list_size += 1;
 }
@@ -217,8 +217,12 @@ void *lc_list_pop_at(lc_list_t *list, size_t index)
         return data;
 
     data = target_node->data;
-    target_node->prev->next = target_node->next;
-    target_node->next->prev = target_node->prev;
+
+    if (target_node != list->head)
+        target_node->prev->next = target_node->next;
+
+    if (target_node != list->tail)
+        target_node->next->prev = target_node->prev;
 
     _free(target_node);
 
