@@ -52,9 +52,6 @@ typedef enum
 
 typedef void (*logger_sink_cb_t)(lc_logger_log_level_t level, const char *msg);
 
-void lc_logger_init();
-void lc_logger_deinit();
-
 void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...);
 
 void lc_logger_set_sink_cb(logger_sink_cb_t sink_cb);
