@@ -95,9 +95,76 @@ TEST_P(LCList, insert_at)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-// void *lc_list_pop_front(lc_list_t *list);
-// void *lc_list_pop_back(lc_list_t *list);
-// void *lc_list_pop_at(lc_list_t *list, size_t index);
+TEST_P(LCList, pop_front)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0)
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    lc_list_pop_front(lclist);
+    stdlist.pop_front();
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
+
+TEST_P(LCList, pop_back)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0)
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    lc_list_pop_back(lclist);
+    stdlist.pop_back();
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
+
+TEST_P(LCList, pop_at)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0)
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    const size_t index = stdlist.size() / 2;
+
+    lc_list_pop_at(lclist, index);
+
+    auto index_it = stdlist.begin();
+    std::advance(index_it, index);
+    stdlist.erase(index_it);
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
 
 // void lc_list_clear(lc_list_t *list);
 
