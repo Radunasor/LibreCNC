@@ -184,8 +184,35 @@ TEST_P(LCList, clear)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-// void *lc_list_find_at(lc_list_t *list, size_t index);
+TEST_P(LCList, find_at)
+{
+    std::list<void *> stdlist = GetParam();
 
-// size_t lc_list_get_size(lc_list_t *list);
+    if (stdlist.size() == 0) // temp solution!
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    const size_t index = stdlist.size() / 2;
+
+    auto index_it = stdlist.begin();
+    std::advance(index_it, index);
+
+    EXPECT_EQ(lc_list_find_at(lclist, index), *index_it);
+}
+
+TEST_P(LCList, get_size)
+{
+    std::list<void *> stdlist = GetParam();
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    EXPECT_EQ(lc_list_get_size(lclist), stdlist.size());
+}
 
 INSTANTIATE_TEST_CASE_P(list_data_driven_test, LCList, testing::ValuesIn(test_data));
