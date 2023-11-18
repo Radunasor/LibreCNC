@@ -3,7 +3,7 @@
 
 #include "platform_defs.h"
 
-#define LIST_FOREACH(list, node_data) for (size_t i = 0; node_data = lc_list_find_at(list, i), node_data != NULL; i++)
+#define LIST_FOREACH(list, node_data) for (size_t i = 0; i < lc_list_get_size(list) && (node_data = lc_list_find_at(list, i), 1); ++i)
 
 typedef struct _lc_list_t lc_list_t;
 
