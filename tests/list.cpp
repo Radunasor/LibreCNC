@@ -46,10 +46,10 @@ TEST_P(LCList, InsertFront)
     for (void *n : stdlist)
         lc_list_insert_front(lclist, n);
 
-    std::list<void *> lclist_elements;
-    convert_lclist_to_stdlist(lclist_elements, lclist);
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
 
-    EXPECT_THAT(lclist_elements, testing::ElementsAreArray(stdlist));
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
 INSTANTIATE_TEST_CASE_P(list_data_driven_test, LCList, testing::ValuesIn(test_data));
