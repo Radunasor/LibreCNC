@@ -137,6 +137,8 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 
 void *lc_list_pop_front(lc_list_t *list)
 {
+    LC_ASSERT(list->list_size, "list pop front invalid size");
+
     void *data = NULL;
 
     if (list->list_size == 0)
@@ -170,6 +172,8 @@ void *lc_list_pop_front(lc_list_t *list)
 
 void *lc_list_pop_back(lc_list_t *list)
 {
+    LC_ASSERT(list->list_size, "list pop back invalid size");
+
     void *data = NULL;
 
     if (list->list_size == 0)
@@ -203,11 +207,11 @@ void *lc_list_pop_back(lc_list_t *list)
 
 void *lc_list_pop_at(lc_list_t *list, size_t index)
 {
-    LC_ASSERT(index < list->list_size, "list insert out of range");
+    LC_ASSERT(index < list->list_size, "pop index out of range");
 
     void *data = NULL;
 
-    lc_list_node_t *target_node = lc_list_find_at(list, index);
+    lc_list_node_t *target_node = lc_list_get_node(list, index);
 
     if (!target_node)
         return data;
@@ -225,8 +229,10 @@ void *lc_list_pop_at(lc_list_t *list, size_t index)
 
 void lc_list_clear(lc_list_t *list)
 {
-    while (lc_list_pop_back(list))
-        ;
+    size_t initial_size = list->list_size;
+
+    for (size_t i = 0; i < initial_size; i++)
+        lc_list_pop_back(list);
 }
 
 void *lc_list_find_at(lc_list_t *list, size_t index)
