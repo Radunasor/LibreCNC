@@ -29,17 +29,17 @@ protected:
         lc_list_destroy(lclist);
     }
 
-    void convert_lclist_to_stdlist(std::list<void *> &stdlist, lc_list_t *list)
+    void convert_lclist_to_stdlist(std::list<void *> &stsdlist, lc_list_t *list)
     {
         void *data_ptr = NULL;
         LIST_FOREACH(list, data_ptr)
-        stdlist.push_back(data_ptr);
+        stsdlist.push_back(data_ptr);
     }
 
     lc_list_t *lclist;
 };
 
-TEST_P(LCList, InsertFront)
+TEST_P(LCList, insert_front)
 {
     std::list<void *> stdlist = GetParam();
 
@@ -55,9 +55,45 @@ TEST_P(LCList, InsertFront)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist_r));
 }
 
-// void lc_list_insert_front(lc_list_t *list, void *data);
-// void lc_list_insert_back(lc_list_t *list, void *data);
-// void lc_list_insert_at(lc_list_t *list, size_t index, void *data);
+TEST_P(LCList, insert_back)
+{
+    std::list<void *> stdlist = GetParam();
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
+
+TEST_P(LCList, insert_at)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0)
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    const size_t index = stdlist.size() / 2;
+
+    auto index_it = stdlist.begin();
+    std::advance(index_it, index);
+    stdlist.insert(index_it, VOID_PTR("test data"));
+
+    lc_list_insert_at(lclist, index, VOID_PTR("test data"));
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
 
 // void *lc_list_pop_front(lc_list_t *list);
 // void *lc_list_pop_back(lc_list_t *list);
