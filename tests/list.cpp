@@ -72,7 +72,7 @@ TEST_P(LCList, insert_at)
 {
     std::list<void *> stdlist = GetParam();
 
-    if (stdlist.size() == 0)
+    if (stdlist.size() == 0) // temp solution!
     {
         EXPECT_TRUE(true);
         return;
@@ -99,7 +99,7 @@ TEST_P(LCList, pop_front)
 {
     std::list<void *> stdlist = GetParam();
 
-    if (stdlist.size() == 0)
+    if (stdlist.size() == 0) // temp solution!
     {
         EXPECT_TRUE(true);
         return;
@@ -121,7 +121,7 @@ TEST_P(LCList, pop_back)
 {
     std::list<void *> stdlist = GetParam();
 
-    if (stdlist.size() == 0)
+    if (stdlist.size() == 0) // temp solution!
     {
         EXPECT_TRUE(true);
         return;
@@ -143,7 +143,7 @@ TEST_P(LCList, pop_at)
 {
     std::list<void *> stdlist = GetParam();
 
-    if (stdlist.size() == 0)
+    if (stdlist.size() == 0) // temp solution!
     {
         EXPECT_TRUE(true);
         return;
@@ -166,7 +166,21 @@ TEST_P(LCList, pop_at)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-// void lc_list_clear(lc_list_t *list);
+TEST_P(LCList, clear)
+{
+    std::list<void *> stdlist = GetParam();
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    lc_list_clear(lclist);
+    stdlist.clear();
+
+    std::list<void *> converted_lclist;
+    convert_lclist_to_stdlist(converted_lclist, lclist);
+
+    EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
 
 // void *lc_list_find_at(lc_list_t *list, size_t index);
 
