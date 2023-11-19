@@ -96,6 +96,7 @@ lc_list_t *lc_list_create()
 
 void lc_list_destroy(lc_list_t *list)
 {
+    lc_list_clear(list);
     _free(list);
 }
 
