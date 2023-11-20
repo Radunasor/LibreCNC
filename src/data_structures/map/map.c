@@ -107,6 +107,8 @@ void *lc_map_remove(lc_map_t *map, void *key, size_t key_size)
 
     (void)lc_list_pop_at(map->buckets_list[index], list_index);
 
+    map->size--;
+
     return data;
 }
 
