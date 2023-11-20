@@ -96,31 +96,61 @@ TEST_P(LCList, insert_at)
 
     EXPECT_EQ(index, lc_list_get_index(lclist, VOID_PTR("test data")));
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
 
+TEST_P(LCList, insert_at_back)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0) // temp solution!
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    size_t index = 0;
     index = stdlist.size() - 1;
-    index_it = stdlist.begin();
+    auto index_it = stdlist.begin();
     std::advance(index_it, index);
-    stdlist.insert(index_it, VOID_PTR("test data 2"));
+    stdlist.insert(index_it, VOID_PTR("test data"));
 
-    lc_list_insert_at(lclist, index, VOID_PTR("test data 2"));
+    lc_list_insert_at(lclist, index, VOID_PTR("test data"));
 
-    converted_lclist.clear();
+    std::list<void *> converted_lclist;
     convert_lclist_to_stdlist(converted_lclist, lclist);
 
-    EXPECT_EQ(index, lc_list_get_index(lclist, VOID_PTR("test data 2")));
+    EXPECT_EQ(index, lc_list_get_index(lclist, VOID_PTR("test data")));
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
+}
 
+TEST_P(LCList, insert_at_front)
+{
+    std::list<void *> stdlist = GetParam();
+
+    if (stdlist.size() == 0) // temp solution!
+    {
+        EXPECT_TRUE(true);
+        return;
+    }
+
+    for (void *n : stdlist)
+        lc_list_insert_back(lclist, n);
+
+    size_t index = 0;
     index = 0;
-    index_it = stdlist.begin();
+    auto index_it = stdlist.begin();
     std::advance(index_it, index);
-    stdlist.insert(index_it, VOID_PTR("test data 3"));
+    stdlist.insert(index_it, VOID_PTR("test data"));
 
-    lc_list_insert_at(lclist, index, VOID_PTR("test data 3"));
+    lc_list_insert_at(lclist, index, VOID_PTR("test data"));
 
-    converted_lclist.clear();
+    std::list<void *> converted_lclist;
     convert_lclist_to_stdlist(converted_lclist, lclist);
 
-    EXPECT_EQ(index, lc_list_get_index(lclist, VOID_PTR("test data 3")));
+    EXPECT_EQ(index, lc_list_get_index(lclist, VOID_PTR("test data")));
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
@@ -168,7 +198,7 @@ TEST_P(LCList, pop_back)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-TEST_P(LCList, pop_at_body)
+TEST_P(LCList, pop_at)
 {
     std::list<void *> stdlist = GetParam();
 
@@ -195,7 +225,7 @@ TEST_P(LCList, pop_at_body)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-TEST_P(LCList, pop_at_tail)
+TEST_P(LCList, pop_at_back)
 {
     std::list<void *> stdlist = GetParam();
 
@@ -221,7 +251,7 @@ TEST_P(LCList, pop_at_tail)
     EXPECT_THAT(converted_lclist, testing::ElementsAreArray(stdlist));
 }
 
-TEST_P(LCList, pop_at_head)
+TEST_P(LCList, pop_at_front)
 {
     std::list<void *> stdlist = GetParam();
 
