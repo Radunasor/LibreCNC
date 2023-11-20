@@ -67,6 +67,7 @@ void lc_map_destroy(lc_map_t *map)
     for (size_t i = 0; i < map->capacity; i++)
         lc_list_destroy(map->buckets_list[i]);
 
+    _free(map->buckets_list);
     _free(map);
 }
 
