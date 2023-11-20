@@ -34,8 +34,121 @@ struct _lc_map_t
     size_t size;
 };
 
-// MurmurHash3 implementation
-static uint32_t murmurhash3(const void *key, int len, uint32_t seed)
+/******************************************************/
+/***********static functions declarations**************/
+/******************************************************/
+static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed);
+static inline void lc_map_resize_capacity(lc_map_t *map);
+static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size);
+/******************************************************/
+
+lc_map_t *lc_map_create()
+{
+    lc_map_t *map = (lc_map_t *)_malloc(sizeof(lc_map_t));
+
+    LC_ASSERT(map, "Map memory allocation failed!");
+
+    map->buckets_list = (lc_list_t **)calloc(INITIAL_CAPACITY, sizeof(lc_list_t *));
+    map->capacity = INITIAL_CAPACITY;
+    map->size = 0;
+
+    LC_ASSERT(map->buckets_list, "map buckets memory allocation failed!");
+
+    for (size_t i = 0; i < map->capacity; i++)
+        map->buckets_list[i] = lc_list_create();
+
+    return map;
+}
+
+void lc_map_destroy(lc_map_t *map)
+{
+    lc_map_clear(map);
+
+    for (size_t i = 0; i < map->capacity; i++)
+        lc_list_destroy(map->buckets_list[i]);
+
+    _free(map);
+}
+
+void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_t value_size)
+{
+    // Check load factor and resize if necessary
+    if ((double)map->size / map->capacity > LOAD_FACTOR_THRESHOLD)
+        lc_map_resize_capacity(map);
+
+    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+
+    lc_map_key_value_pair_t *pair = lc_map_create_pair(key, key_size, value, value_size);
+
+    lc_list_insert_back(map->buckets_list[index], pair);
+
+    map->size++;
+}
+
+void *lc_map_remove(lc_map_t *map, void *key, size_t key_size)
+{
+    void *data = NULL;
+    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+
+    lc_map_key_value_pair_t *pair = NULL;
+    size_t list_index = 0;
+
+    LIST_FOREACH(map->buckets_list[index], pair)
+    if (!memcmp(key, pair->key->key_data, key_size))
+    {
+        data = pair->value->value_data;
+        _free(pair->key->key_data);
+        _free(pair->key);
+        _free(pair->value->value_data);
+        _free(pair->value);
+        _free(pair);
+        list_index = fei;
+    }
+
+    (void)lc_list_pop_at(map->buckets_list[index], list_index);
+
+    return data;
+}
+
+void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
+{
+    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+
+    lc_map_key_value_pair_t *pair = NULL;
+
+    LIST_FOREACH(map->buckets_list[index], pair)
+    if (!memcmp(key, pair->key->key_data, key_size))
+        return pair->value->value_data;
+
+    // Key not found
+    return NULL;
+}
+
+void lc_map_clear(lc_map_t *map)
+{
+    for (size_t i = 0; i < map->capacity; i++)
+    {
+        lc_map_key_value_pair_t *pair = NULL;
+
+        LIST_FOREACH(map->buckets_list[i], pair)
+        {
+            _free(pair->key->key_data);
+            _free(pair->key);
+            _free(pair->value->value_data);
+            _free(pair->value);
+            _free(pair);
+        }
+
+        lc_list_clear(map->buckets_list[i]);
+    }
+
+    map->size = 0;
+}
+
+/******************************************************/
+/***********static functions implementations***********/
+/******************************************************/
+static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed)
 {
     const uint8_t *data = (const uint8_t *)key;
     const int nblocks = len / 4;
@@ -94,50 +207,36 @@ static uint32_t murmurhash3(const void *key, int len, uint32_t seed)
     return h;
 }
 
-lc_map_t *lc_map_create()
-{
-    lc_map_t *map = (lc_map_t *)_malloc(sizeof(lc_map_t));
-
-    LC_ASSERT(map, "Map memory allocation failed!");
-
-    map->buckets_list = (lc_list_t **)calloc(INITIAL_CAPACITY, sizeof(lc_list_t *));
-    map->capacity = INITIAL_CAPACITY;
-    map->size = 0;
-
-    LC_ASSERT(map->buckets_list, "map buckets memory allocation failed!");
-
-    for (size_t i = 0; i < map->capacity; i++)
-        map->buckets_list[i] = lc_list_create();
-
-    return map;
-}
-
-void lc_map_destroy(lc_map_t *map)
-{
-    lc_map_clear(map);
-
-    for (size_t i = 0; i < map->capacity; i++)
-        lc_list_destroy(map->buckets_list[i]);
-
-    _free(map);
-}
-
-static inline void resize_capacity(lc_map_t *map)
+static inline void lc_map_resize_capacity(lc_map_t *map)
 {
     size_t new_capacity = map->capacity * 2;
-    map->buckets_list = (lc_list_t **)realloc(map->buckets_list, new_capacity * sizeof(lc_list_t *));
-    memset(map->buckets_list + map->capacity, 0, (new_capacity - map->capacity) * sizeof(lc_list_t *));
+
+    lc_list_t **new_bucket_list = (lc_list_t **)calloc(new_capacity, sizeof(lc_list_t *));
+
+    for (size_t i = 0; i < new_capacity; i++)
+        new_bucket_list[i] = lc_list_create();
+
+    for (size_t i = 0; i < map->capacity; i++)
+    {
+        lc_map_key_value_pair_t *pair = NULL;
+
+        LIST_FOREACH(map->buckets_list[i], pair)
+        {
+            size_t new_index = lc_map_murmurhash3(pair->key->key_data, pair->key->key_size, 0) % new_capacity;
+            lc_list_insert_back(new_bucket_list[new_index], pair);
+        }
+
+        lc_list_destroy(map->buckets_list[i]);
+    }
+
+    _free(map->buckets_list);
+
+    map->buckets_list = new_bucket_list;
     map->capacity = new_capacity;
 }
 
-void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_t value_size)
+static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size)
 {
-    // Check load factor and resize if necessary
-    if ((double)map->size / map->capacity > LOAD_FACTOR_THRESHOLD)
-        resize_capacity(map);
-
-    uint32_t index = murmurhash3(key, key_size, 0) % map->capacity;
-
     lc_map_key_value_pair_t *pair = (lc_map_key_value_pair_t *)_malloc(sizeof(lc_map_key_value_pair_t));
 
     LC_ASSERT(pair, "map key value pair memory allocation failed!");
@@ -147,55 +246,16 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_
     pair->key->key_size = key_size;
     pair->key->key_data = _malloc(key_size);
     LC_ASSERT(pair->key->key_data, "map key data memory allocation failed!");
-    memcpy(pair->key->key_data, key, key_size);
+    memcpy(pair->key->key_data, key_data, key_size);
 
     pair->value = (lc_map_value_t *)_malloc(sizeof(lc_map_value_t));
     LC_ASSERT(pair->value, "map value type memory allocation failed!");
     pair->value->value_size = value_size;
     pair->value->value_data = _malloc(value_size);
     LC_ASSERT(pair->value->value_data, "map value data memory allocation failed!");
-    memcpy(pair->value->value_data, value, value_size);
+    memcpy(pair->value->value_data, value_data, value_size);
 
-    lc_list_insert_back(map->buckets_list[index], pair);
-
-    map->size++;
+    return pair;
 }
 
-void *lc_map_remove(lc_map_t *map, void *key)
-{
-}
-
-void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
-{
-    uint32_t index = murmurhash3(key, key_size, 0) % map->capacity;
-
-    lc_map_key_value_pair_t *pair = NULL;
-
-    LIST_FOREACH(map->buckets_list[index], pair)
-    if (!memcmp(key, pair->key->key_data, key_size))
-        return pair->value->value_data;
-
-    // Key not found
-    return NULL;
-}
-
-void lc_map_clear(lc_map_t *map)
-{
-    for (size_t i = 0; i < map->capacity; i++)
-    {
-        lc_map_key_value_pair_t *pair = NULL;
-
-        LIST_FOREACH(map->buckets_list[i], pair)
-        {
-            _free(pair->key->key_data);
-            _free(pair->key);
-            _free(pair->value->value_data);
-            _free(pair->value);
-            _free(pair);
-        }
-
-        lc_list_clear(map->buckets_list[i]);
-    }
-
-    map->size = 0;
-}
+/******************************************************/
