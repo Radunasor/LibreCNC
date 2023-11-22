@@ -36,8 +36,10 @@ protected:
 
         for (std::map<const char *, int>::iterator mp_it = stdmap.begin(); mp_it != stdmap.end(); ++mp_it)
         {
-            int *output = (int *)lc_map_find(lcmap, (void *)mp_it->first, strlen(mp_it->first));
-            if (output)
+            int *output = NULL;
+            size_t output_size = 0;
+
+            if (lc_map_find(lcmap, (void *)mp_it->first, strlen(mp_it->first), (void **)&output, &output_size))
                 converted_stdmap.insert({mp_it->first, *output});
         }
 
@@ -70,7 +72,11 @@ TEST_P(LCMap, find)
     std::map<const char *, int>::iterator mp_it = expected.begin();
     std::advance(mp_it, pair_no);
 
-    int *output = (int *)lc_map_find(lcmap, (void *)mp_it->first, strlen(mp_it->first));
+    int *output = NULL;
+    size_t output_size = 0;
+
+    EXPECT_TRUE(lc_map_find(lcmap, (void *)mp_it->first, strlen(mp_it->first), (void **)&output, &output_size));
+
     auto expected_output = expected.find(mp_it->first);
 
     EXPECT_EQ(*output, expected_output->second);
