@@ -108,4 +108,4 @@ bool lc_config_get_float(lc_config_key_t key, float *value);
  */
 bool lc_config_get_data(lc_config_key_t key, uint8_t **value, size_t *data_size);
 
-#endif
+#endif // CONFIG_H
