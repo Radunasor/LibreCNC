@@ -113,7 +113,7 @@ void *lc_map_erase(lc_map_t *map, void *key, size_t key_size)
     return data;
 }
 
-void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
+bool lc_map_find(lc_map_t *map, void *key, size_t key_size, void **value, size_t *value_size)
 {
     uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
 
@@ -121,10 +121,14 @@ void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
 
     LIST_FOREACH(map->buckets_list[index], pair)
     if (!memcmp(key, pair->key->key_data, key_size))
-        return pair->value->value_data;
+    {
+        *value = pair->value->value_data;
+        *value_size = pair->value->value_size;
+        return true;
+    }
 
     // Key not found
-    return NULL;
+    return false;
 }
 
 void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb, void *user_data)

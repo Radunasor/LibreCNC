@@ -13,7 +13,7 @@ void lc_map_destroy(lc_map_t *map);
 void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *data, size_t data_size);
 void *lc_map_erase(lc_map_t *map, void *key, size_t key_size);
 
-void *lc_map_find(lc_map_t *map, void *key, size_t key_size);
+bool lc_map_find(lc_map_t *map, void *key, size_t key_size, void **value, size_t *value_size);
 
 void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb, void *user_data);
 
