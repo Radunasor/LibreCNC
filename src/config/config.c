@@ -1,7 +1,15 @@
 #include "config/config.h"
 #include "data_structures/map/map.h"
 
+#include "config/default_configs.h"
+
 static lc_map_t *config_map = NULL;
+
+/******************************************************/
+/***********static functions declarations**************/
+/******************************************************/
+
+/******************************************************/
 
 void lc_config_init()
 {
@@ -19,6 +27,16 @@ void lc_config_deinit()
     lc_map_destroy(config_map);
 
     config_map = NULL;
+}
+
+void lc_config_load_default_configs()
+{
+    uint16_t conf_idx = 0;
+    while (default_config_table[conf_idx].key != _LC_CONFIG_KEY_LAST)
+    {
+        lc_config_set_float(default_config_table[conf_idx].key, default_config_table[conf_idx].value);
+        conf_idx++;
+    }
 }
 
 void lc_config_set_bool(lc_config_key_t key, const bool value)
@@ -84,3 +102,9 @@ bool lc_config_get_data(lc_config_key_t key, uint8_t **value, size_t *data_size)
 {
     return lc_map_find(config_map, &key, sizeof(lc_config_key_t), (void **)value, data_size);
 }
+
+/******************************************************/
+/***********static functions implementations***********/
+/******************************************************/
+
+/******************************************************/
