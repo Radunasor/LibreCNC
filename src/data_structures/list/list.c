@@ -21,67 +21,13 @@ struct _lc_list_t
 
 #define LIST_INTERNAL_RANGELOOP(list, node) for (lc_list_node_t *node = list->head; node != NULL; node = node->next)
 
-static lc_list_node_t *lc_list_get_node(lc_list_t *list, size_t index)
-{
-    LC_ASSERT(index < list->size, "list insert out of range");
+/******************************************************/
+/***********static functions declarations**************/
+/******************************************************/
+static lc_list_node_t *lc_list_get_node(lc_list_t *list, size_t index);
 
-    size_t tmp_idx = 0;
-    lc_list_node_t *node_ptr = NULL;
-
-    LIST_INTERNAL_RANGELOOP(list, node)
-    {
-        if (tmp_idx == index)
-        {
-            node_ptr = node;
-            break;
-        }
-        tmp_idx++;
-    }
-
-    return node_ptr;
-}
-
-static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
-{
-    void *data = NULL;
-
-    list->size -= 1;
-
-    if (node_to_erase == list->head)
-    {
-        lc_list_node_t *ex_head = list->head;
-
-        if (list->size > 1)
-            ex_head->next->prev = NULL;
-
-        list->head = ex_head->next;
-        data = ex_head->data;
-
-        _free(ex_head);
-
-        return data;
-    }
-
-    if (node_to_erase == list->tail)
-    {
-        lc_list_node_t *ex_tail = list->tail;
-
-        ex_tail->prev->next = NULL;
-        list->tail = ex_tail->prev;
-        data = ex_tail->data;
-
-        _free(ex_tail);
-        return data;
-    }
-
-    node_to_erase->prev->next = node_to_erase->next;
-    node_to_erase->next->prev = node_to_erase->prev;
-    data = node_to_erase->data;
-
-    _free(node_to_erase);
-
-    return data;
-}
+static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase);
+/******************************************************/
 
 lc_list_t *lc_list_create()
 {
@@ -243,3 +189,69 @@ size_t lc_list_get_size(lc_list_t *list)
 {
     return list->size;
 }
+
+/******************************************************/
+/***********static functions implementations***********/
+/******************************************************/
+static lc_list_node_t *lc_list_get_node(lc_list_t *list, size_t index)
+{
+    LC_ASSERT(index < list->size, "list insert out of range");
+
+    size_t tmp_idx = 0;
+    lc_list_node_t *node_ptr = NULL;
+
+    LIST_INTERNAL_RANGELOOP(list, node)
+    {
+        if (tmp_idx == index)
+        {
+            node_ptr = node;
+            break;
+        }
+        tmp_idx++;
+    }
+
+    return node_ptr;
+}
+
+static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
+{
+    void *data = NULL;
+
+    list->size -= 1;
+
+    if (node_to_erase == list->head)
+    {
+        lc_list_node_t *ex_head = list->head;
+
+        if (list->size > 1)
+            ex_head->next->prev = NULL;
+
+        list->head = ex_head->next;
+        data = ex_head->data;
+
+        _free(ex_head);
+
+        return data;
+    }
+
+    if (node_to_erase == list->tail)
+    {
+        lc_list_node_t *ex_tail = list->tail;
+
+        ex_tail->prev->next = NULL;
+        list->tail = ex_tail->prev;
+        data = ex_tail->data;
+
+        _free(ex_tail);
+        return data;
+    }
+
+    node_to_erase->prev->next = node_to_erase->next;
+    node_to_erase->next->prev = node_to_erase->prev;
+    data = node_to_erase->data;
+
+    _free(node_to_erase);
+
+    return data;
+}
+/******************************************************/
