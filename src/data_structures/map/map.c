@@ -127,6 +127,25 @@ void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
     return NULL;
 }
 
+void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb)
+{
+    for (size_t i = 0; i < map->capacity; i++)
+    {
+        lc_map_key_value_pair_t *pair = NULL;
+
+        LIST_FOREACH(map->buckets_list[i], pair)
+        {
+            if (cb)
+                cb(pair->key->key_data, pair->key->key_size, pair->value->value_data, pair->value->value_size);
+        }
+    }
+}
+
+size_t lc_map_get_size(lc_map_t *map)
+{
+    return map->size;
+}
+
 void lc_map_clear(lc_map_t *map)
 {
     for (size_t i = 0; i < map->capacity; i++)
