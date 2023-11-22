@@ -4,8 +4,15 @@
 #include "config_keys.h"
 #include "platform_defs.h"
 
+typedef struct
+{
+    lc_config_key_t key;
+    float value;
+} lc_config_table_default_t;
+
 void lc_config_init();
 void lc_config_deinit();
+void lc_config_load_default_configs();
 
 void lc_config_set_bool(lc_config_key_t key, const bool value);
 void lc_config_set_int(lc_config_key_t key, const int value);

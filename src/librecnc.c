@@ -10,6 +10,7 @@ void lc_init()
         return;
 
     lc_config_init();
+    lc_config_load_default_configs();
 
     initialized = true;
 }
