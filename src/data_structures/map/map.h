@@ -58,9 +58,8 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *data, size_t
  * @param map The hashmap from which the key-value pair is to be removed.
  * @param key The key to be erased.
  * @param key_size The size of the key.
- * @return A pointer to the data associated with the erased key.
  */
-void *lc_map_erase(lc_map_t *map, void *key, size_t key_size);
+void lc_map_erase(lc_map_t *map, void *key, size_t key_size);
 
 /**
  * @brief Finds a key-value pair in the hashmap.

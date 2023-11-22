@@ -40,6 +40,8 @@ struct _lc_map_t
 static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed);
 static inline void lc_map_resize_capacity(lc_map_t *map);
 static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size);
+static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size);
+static size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size);
 /******************************************************/
 
 lc_map_t *lc_map_create()
@@ -73,57 +75,64 @@ void lc_map_destroy(lc_map_t *map)
 
 void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_t value_size)
 {
+    lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
+    if (pair)
+    {
+        _free(pair->value->value_data);
+
+        pair->value->value_data = _malloc(value_size);
+
+        LC_ASSERT(pair->value, "map value type memory allocation failed!");
+
+        pair->value->value_size = value_size;
+
+        memcpy(pair->value->value_data, value, value_size);
+
+        return;
+    }
+
     // Check load factor and resize if necessary
     if ((double)map->size / map->capacity > LOAD_FACTOR_THRESHOLD)
         lc_map_resize_capacity(map);
 
-    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+    uint32_t index = lc_map_get_index(map, key, key_size);
 
-    lc_map_key_value_pair_t *pair = lc_map_create_pair(key, key_size, value, value_size);
+    pair = lc_map_create_pair(key, key_size, value, value_size);
 
     lc_list_insert_back(map->buckets_list[index], pair);
 
     map->size++;
 }
 
-void *lc_map_erase(lc_map_t *map, void *key, size_t key_size)
+void lc_map_erase(lc_map_t *map, void *key, size_t key_size)
 {
-    void *data = NULL;
-    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+    lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
 
-    lc_map_key_value_pair_t *pair = NULL;
-    size_t list_index = 0;
+    if (!pair)
+        return;
 
-    LIST_FOREACH(map->buckets_list[index], pair)
-    if (!memcmp(key, pair->key->key_data, key_size))
-    {
-        data = pair->value->value_data;
-        _free(pair->key->key_data);
-        _free(pair->key);
-        _free(pair->value->value_data);
-        _free(pair->value);
-        _free(pair);
-        list_index = fei;
-    }
+    size_t list_index = lc_map_get_index(map, key, key_size);
 
-    (void)lc_list_pop_at(map->buckets_list[index], list_index);
+    (void)lc_list_pop_at(map->buckets_list[list_index], lc_list_get_index(map->buckets_list[list_index], pair));
+
+    _free(pair->key->key_data);
+    _free(pair->key);
+    _free(pair->value->value_data);
+    _free(pair->value);
+    _free(pair);
 
     map->size--;
-
-    return data;
 }
 
 bool lc_map_find(lc_map_t *map, void *key, size_t key_size, void **value, size_t *value_size)
 {
-    uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
+    lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
 
-    lc_map_key_value_pair_t *pair = NULL;
-
-    LIST_FOREACH(map->buckets_list[index], pair)
-    if (!memcmp(key, pair->key->key_data, key_size))
+    if (pair)
     {
         *value = pair->value->value_data;
         *value_size = pair->value->value_size;
+
         return true;
     }
 
@@ -284,4 +293,21 @@ static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t
     return pair;
 }
 
+static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size)
+{
+    uint32_t index = lc_map_murmurhash3(key_data, key_size, 0) % map->capacity;
+
+    lc_map_key_value_pair_t *pair = NULL;
+
+    LIST_FOREACH(map->buckets_list[index], pair)
+    if (!memcmp(key_data, pair->key->key_data, key_size))
+        return pair;
+
+    return NULL;
+}
+
+static size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size)
+{
+    return lc_map_murmurhash3(key_data, key_size, 0) % map->capacity;
+}
 /******************************************************/
