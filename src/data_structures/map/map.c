@@ -41,7 +41,7 @@ static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed);
 static inline void lc_map_resize_capacity(lc_map_t *map);
 static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size);
 static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size);
-static size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size);
+static inline size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size);
 /******************************************************/
 
 lc_map_t *lc_map_create()
@@ -295,7 +295,7 @@ static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t
 
 static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size)
 {
-    uint32_t index = lc_map_murmurhash3(key_data, key_size, 0) % map->capacity;
+    uint32_t index = lc_map_get_index(map, key_data, key_size);
 
     lc_map_key_value_pair_t *pair = NULL;
 
@@ -306,7 +306,7 @@ static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, s
     return NULL;
 }
 
-static size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size)
+static inline size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size)
 {
     return lc_map_murmurhash3(key_data, key_size, 0) % map->capacity;
 }
