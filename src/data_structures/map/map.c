@@ -6,7 +6,7 @@
 // Macros for endianness handling
 #define IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 
-#define INITIAL_CAPACITY 4
+#define INITIAL_CAPACITY 32
 #define LOAD_FACTOR_THRESHOLD 0.75
 
 typedef struct
@@ -86,7 +86,7 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_
     map->size++;
 }
 
-void *lc_map_remove(lc_map_t *map, void *key, size_t key_size)
+void *lc_map_erase(lc_map_t *map, void *key, size_t key_size)
 {
     void *data = NULL;
     uint32_t index = lc_map_murmurhash3(key, key_size, 0) % map->capacity;
@@ -127,7 +127,7 @@ void *lc_map_find(lc_map_t *map, void *key, size_t key_size)
     return NULL;
 }
 
-void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb)
+void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb, void *user_data)
 {
     for (size_t i = 0; i < map->capacity; i++)
     {
@@ -136,7 +136,7 @@ void lc_map_foreach(lc_map_t *map, lc_map_foreach_cb_t cb)
         LIST_FOREACH(map->buckets_list[i], pair)
         {
             if (cb)
-                cb(pair->key->key_data, pair->key->key_size, pair->value->value_data, pair->value->value_size);
+                cb(pair->key->key_data, pair->key->key_size, pair->value->value_data, pair->value->value_size, user_data);
         }
     }
 }
