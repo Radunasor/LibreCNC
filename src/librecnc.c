@@ -29,3 +29,7 @@ void lc_deinit()
 
     initialized = false;
 }
+
+void lc_handler()
+{
+}

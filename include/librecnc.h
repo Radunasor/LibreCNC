@@ -9,6 +9,7 @@
 #define LIBRECNC_H
 
 #include <stdbool.h>
+#include "config/config.h"
 
 /**
  * @brief Initializes the LibreCNC.
@@ -26,5 +27,10 @@ bool lc_get_initialized();
  * @brief Deinitializes the LibreCNC library.
  */
 void lc_deinit();
+
+/**
+ * @brief LibreCNC library main handler.
+ */
+void lc_handler();
 
 #endif // LIBRECNC_H
