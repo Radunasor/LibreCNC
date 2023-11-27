@@ -3,6 +3,18 @@
 
 #include "config.h"
 
+/**
+ * @struct lc_config_table_default_t
+ * @brief Structure representing a default configuration entry.
+ *
+ * This structure associates a configuration key with its default float value.
+ */
+typedef struct
+{
+    lc_config_key_t key; ///< The configuration key.
+    float value;         ///< The default float value associated with the key.
+} lc_config_table_default_t;
+
 lc_config_table_default_t default_config_table[] =
     {
         {LC_CONFIG_KEY_X_STEPS_PER_MM, 250.0},
