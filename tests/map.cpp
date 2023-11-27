@@ -56,12 +56,17 @@ TEST_P(LCMap, insert)
     for (std::map<const char *, int>::iterator mp_it = expected.begin(); mp_it != expected.end(); ++mp_it)
         lc_map_insert(lcmap, (void *)mp_it->first, strlen(mp_it->first), &mp_it->second, sizeof(mp_it->second));
 
+    std::map<const char *, int> convertd_stdmap = convert_lcmap_to_stdmap();
+
+    EXPECT_THAT(convertd_stdmap, ::testing::UnorderedElementsAreArray(expected.begin(), expected.end()));
+
+    int overwrite_int = -1;
     size_t pair_no = expected.size() / 2;
     std::map<const char *, int>::iterator mp_it = expected.begin();
     std::advance(mp_it, pair_no);
-    lc_map_insert(lcmap, (void *)mp_it->first, strlen(mp_it->first), &mp_it->second, sizeof(mp_it->second));
+    lc_map_insert(lcmap, (void *)mp_it->first, strlen(mp_it->first), &overwrite_int, sizeof(overwrite_int));
 
-    std::map<const char *, int> convertd_stdmap = convert_lcmap_to_stdmap();
+    convertd_stdmap.insert({mp_it->first, overwrite_int});
 
     EXPECT_THAT(convertd_stdmap, ::testing::UnorderedElementsAreArray(expected.begin(), expected.end()));
 }
