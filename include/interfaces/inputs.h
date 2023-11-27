@@ -1,7 +1,7 @@
 #ifndef INPUTS_H
 #define INPUTS_H
 
-#include "platform_defs.h"
+#include "common_defs.h"
 
 typedef struct
 {

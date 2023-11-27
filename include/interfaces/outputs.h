@@ -1,7 +1,7 @@
 #ifndef OUTPUTS_H
 #define OUTPUTS_H
 
-#include "platform_defs.h"
+#include "common_defs.h"
 
 typedef struct
 {
