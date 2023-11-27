@@ -15,6 +15,7 @@ typedef struct
     bool (*lc_interface_input_z_end_switch_trigged)();
 
     bool (*lc_interface_input_estop_switch_trigged)();
+    bool (*lc_interface_input_probe_contact_trigged)();
 } lc_interface_input_t;
 
 #endif
