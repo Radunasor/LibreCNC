@@ -13,6 +13,8 @@ typedef struct
 
     bool (*lc_interface_limits_z_axis_home)();
     bool (*lc_interface_limits_z_axis_end)();
+
+    bool (*lc_interface_estop_switch_trigged)();
 } lc_interfac_limits_t;
 
 #endif
