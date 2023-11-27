@@ -1,5 +1,5 @@
-#ifndef PLATFORM_DEFS_H
-#define PLATFORM_DEFS_H
+#ifndef COMMON_DEFS_H
+#define COMMON_DEFS_H
 
 #include <stdint.h>
 #include <stdio.h>

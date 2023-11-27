@@ -8,7 +8,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "platform_defs.h"
+#include "common_defs.h"
 
 /**
  * @struct lc_map_t

@@ -8,7 +8,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "platform_defs.h"
+#include "common_defs.h"
 
 #define LIST_FOREACH(list, node_data) for (size_t fei = 0; fei < lc_list_get_size(list) && (node_data = lc_list_find_at(list, fei), 1); ++fei)
 

@@ -9,7 +9,7 @@
 #define CONFIG_H
 
 #include "config_keys.h"
-#include "platform_defs.h"
+#include "common_defs.h"
 
 /**
  * @struct lc_config_table_default_t
