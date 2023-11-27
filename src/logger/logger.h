@@ -20,31 +20,31 @@ typedef enum
     LC_LOGGER_LOG_LEVEL_OFF = LC_LOGGER_LOG_LEVEL_OFF_D,
 } lc_logger_log_level_t;
 
-#if LC_CONF_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_TRACE_D
+#if LC_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_TRACE_D
 #define LC_LOG_TRACE(...) lc_logger_log(LC_LOGGER_LOG_LEVEL_TRACE, __VA_ARGS__);
 #else
 #define LC_LOG_TRACE(...)
 #endif
 
-#if LC_CONF_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_DEBUG_D
+#if LC_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_DEBUG_D
 #define LC_LOG_DEBUG(...) lc_logger_log(LC_LOGGER_LOG_LEVEL_DEBUG, __VA_ARGS__);
 #else
 #define LC_LOG_DEBUG(...)
 #endif
 
-#if LC_CONF_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_INFO_D
+#if LC_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_INFO_D
 #define LC_LOG_INFO(...) lc_logger_log(LC_LOGGER_LOG_LEVEL_INFO, __VA_ARGS__);
 #else
 #define LC_LOG_INFO(...)
 #endif
 
-#if LC_CONF_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_WARN_D
+#if LC_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_WARN_D
 #define LC_LOG_WARN(...) lc_logger_log(LC_LOGGER_LOG_LEVEL_WARN, __VA_ARGS__);
 #else
 #define LC_LOG_WARN(...)
 #endif
 
-#if LC_CONF_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_ERROR_D
+#if LC_LOG_LEVEL <= LC_LOGGER_LOG_LEVEL_ERROR_D
 #define LC_LOG_ERROR(...) lc_logger_log(LC_LOGGER_LOG_LEVEL_ERROR, __VA_ARGS__);
 #else
 #define LC_LOG_ERROR(...)
