@@ -1,5 +1,5 @@
-#ifndef INPUTS_H
-#define INPUTS_H
+#ifndef IINPUTS_H
+#define IINPUTS_H
 
 #include "common_defs.h"
 

@@ -1,5 +1,5 @@
-#ifndef OUTPUTS_H
-#define OUTPUTS_H
+#ifndef IOUTPUTS_H
+#define IOUTPUTS_H
 
 #include "common_defs.h"
 
