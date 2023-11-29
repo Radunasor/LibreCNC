@@ -5,47 +5,83 @@ extern "C"
 {
 #include "data_structures/ring_buffer/ring_buffer.h"
 }
-class RingBufferTest : public ::testing::Test
+class RingBuffer : public ::testing::Test
 {
 protected:
-    lc_ring_buffer_t *rb;
-
     void SetUp() override
     {
-        rb = lc_ring_buffer_create(10);
+        // Initialization code, executed before each test
+        rb = lc_ring_buffer_create(3); // Change the size as needed
     }
 
     void TearDown() override
     {
+        // Clean-up code, executed after each test
         lc_ring_buffer_destroy(rb);
     }
+
+    lc_ring_buffer_t *rb;
 };
 
-TEST_F(RingBufferTest, CreateDestroy)
+TEST_F(RingBuffer, Creation)
 {
-    EXPECT_NE(rb, nullptr);
+    ASSERT_NE(rb, nullptr);
+    EXPECT_EQ(lc_ring_buffer_get_elemets_count(rb), 0);
+    EXPECT_EQ(lc_ring_buffer_get_size(rb), 3); // Change the size as needed
+    EXPECT_FALSE(lc_ring_buffer_is_full(rb));
 }
 
-TEST_F(RingBufferTest, InsertRemove)
+TEST_F(RingBuffer, InsertionAndRemoval)
 {
-    int data1 = 123;
+    // Insert elements
+    int data1 = 1;
+    int data2 = 2;
+    int data3 = 3;
+
     lc_ring_buffer_insert(rb, &data1);
-    int *data2 = (int *)lc_ring_buffer_remove(rb);
-    EXPECT_EQ(*data2, 123);
+    lc_ring_buffer_insert(rb, &data2);
+    lc_ring_buffer_insert(rb, &data3);
+
+    EXPECT_EQ(lc_ring_buffer_get_elemets_count(rb), 3);
+    EXPECT_TRUE(lc_ring_buffer_is_full(rb));
+
+    // Remove elements
+    int *removed1 = (int *)lc_ring_buffer_remove(rb);
+    int *removed2 = (int *)lc_ring_buffer_remove(rb);
+    int *removed3 = (int *)lc_ring_buffer_remove(rb);
+
+    EXPECT_EQ(*removed1, 1);
+    EXPECT_EQ(*removed2, 2);
+    EXPECT_EQ(*removed3, 3);
+
+    EXPECT_EQ(lc_ring_buffer_get_elemets_count(rb), 0);
+    EXPECT_FALSE(lc_ring_buffer_is_full(rb));
 }
 
-TEST_F(RingBufferTest, BufferFull)
+TEST_F(RingBuffer, InsertionWhenFull)
 {
-    for (int i = 0; i < 10; i++)
-        lc_ring_buffer_insert(rb, &i);
+    int data1 = 1;
+    int data2 = 2;
+    int data3 = 3;
+    int data4 = 4;
 
-    int data = 999;
-    lc_ring_buffer_insert(rb, &data);
-    int *removed_data = (int *)lc_ring_buffer_remove(rb);
-    EXPECT_EQ(removed_data, nullptr); // The new data should not be in the buffer
+    lc_ring_buffer_insert(rb, &data1);
+    lc_ring_buffer_insert(rb, &data2);
+    lc_ring_buffer_insert(rb, &data3);
+
+    EXPECT_TRUE(lc_ring_buffer_is_full(rb));
+
+    // Try to insert when full
+    lc_ring_buffer_insert(rb, &data4);
+
+    EXPECT_EQ(lc_ring_buffer_get_elemets_count(rb), 3);
+    EXPECT_TRUE(lc_ring_buffer_is_full(rb));
 }
 
-TEST_F(RingBufferTest, BufferEmpty)
+TEST_F(RingBuffer, RemovalWhenEmpty)
 {
-    EXPECT_EQ(lc_ring_buffer_remove(rb), nullptr);
+    // Try to remove from an empty buffer
+    int *removed = (int *)lc_ring_buffer_remove(rb);
+
+    EXPECT_EQ(removed, nullptr);
 }

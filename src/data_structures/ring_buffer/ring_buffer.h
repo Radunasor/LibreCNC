@@ -8,3 +8,4 @@ void lc_ring_buffer_insert(lc_ring_buffer_t *rb, void *data);
 void *lc_ring_buffer_remove(lc_ring_buffer_t *rb);
 size_t lc_ring_buffer_get_elemets_count(lc_ring_buffer_t *rb);
 size_t lc_ring_buffer_get_size(lc_ring_buffer_t *rb);
+bool lc_ring_buffer_is_full(lc_ring_buffer_t *rb);

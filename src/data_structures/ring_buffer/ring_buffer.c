@@ -45,10 +45,7 @@ void lc_ring_buffer_insert(lc_ring_buffer_t *rb, void *data)
     LC_ASSERT(data, "data pointer is NULL"); // Check if data is NULL
 
     if (rb->count == rb->size) // Check if the buffer is full
-    {
-        LC_LOG_WARN("Buffer is full");
-        return; // Return an error value
-    }
+        return;                // Return an error value
 
     rb->buffer[rb->head] = data;
     rb->head = (rb->head + 1) % rb->size;
@@ -57,11 +54,8 @@ void lc_ring_buffer_insert(lc_ring_buffer_t *rb, void *data)
 
 void *lc_ring_buffer_remove(lc_ring_buffer_t *rb)
 {
-    if (rb->head == rb->tail)
-    {
-        LC_LOG_WARN("Buffer is empty");
+    if (rb->count == 0)
         return NULL; // Return an error value
-    }
 
     void *data = rb->buffer[rb->tail];
     rb->tail = (rb->tail + 1) % rb->size;
@@ -77,4 +71,9 @@ size_t lc_ring_buffer_get_elemets_count(lc_ring_buffer_t *rb)
 size_t lc_ring_buffer_get_size(lc_ring_buffer_t *rb)
 {
     return rb->size;
+}
+
+bool lc_ring_buffer_is_full(lc_ring_buffer_t *rb)
+{
+    return rb->count == rb->size;
 }
