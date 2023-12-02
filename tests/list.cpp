@@ -324,4 +324,4 @@ TEST_P(LCList, get_size)
     EXPECT_EQ(lc_list_get_size(lclist), stdlist.size());
 }
 
-INSTANTIATE_TEST_CASE_P(list_data_driven_test, LCList, testing::ValuesIn(test_data));
+INSTANTIATE_TEST_SUITE_P(list_data_driven_test, LCList, testing::ValuesIn(test_data));
