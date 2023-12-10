@@ -21,6 +21,9 @@ typedef enum
 #define _malloc malloc
 #define _free free
 
+#define MIN(x, y) x < y ? x : y
+#define MAX(x, y) x < y ? y : x
+
 #ifdef NDEBUG
 
 #define LC_ASSERT(expr, msg)
