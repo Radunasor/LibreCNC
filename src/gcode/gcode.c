@@ -140,24 +140,26 @@ static void lc_gcode_parse_line(const char *line)
     uint16_t command = 0;
     bool subcommand_existed = false;
     uint16_t sub_command = 0;
+    const char *command_ptr = line;
 
     if (gcode_code_f_callback)
     {
-        lc_gcode_parser_get_command(line, 'F', &command, &subcommand_existed, &sub_command);
-        LC_LOG_INFO("F command found with value: %d", command);
-        gcode_code_f_callback(command, sub_command, &line_gcode_attributes);
+        while (lc_gcode_parser_get_command(&command_ptr, 'F', &command, &subcommand_existed, &sub_command))
+            gcode_code_f_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
     }
 
+    command_ptr = line;
     if (gcode_code_g_callback)
     {
-        lc_gcode_parser_get_command(line, 'G', &command, &subcommand_existed, &sub_command);
-        gcode_code_g_callback(command, sub_command, &line_gcode_attributes);
+        while (lc_gcode_parser_get_command(&command_ptr, 'G', &command, &subcommand_existed, &sub_command))
+            gcode_code_g_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
     }
 
+    command_ptr = line;
     if (gcode_code_m_callback)
     {
-        lc_gcode_parser_get_command(line, 'M', &command, &subcommand_existed, &sub_command);
-        gcode_code_m_callback(command, sub_command, &line_gcode_attributes);
+        while (lc_gcode_parser_get_command(&command_ptr, 'M', &command, &subcommand_existed, &sub_command))
+            gcode_code_m_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
     }
 }
 /*********************************************************/
