@@ -137,29 +137,32 @@ static void lc_gcode_parse_line(const char *line)
     for (uint8_t i = 0; lc_gcode_parser_tag_map[i].tag; i++)
         lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->value));
 
+    struct
+    {
+        const char tag;
+        lc_gcode_cb_t callback;
+    } lc_gcode_command_tag_map[] = {
+        {'F', gcode_code_f_callback},
+        {'M', gcode_code_m_callback},
+        {'G', gcode_code_g_callback},
+
+        {'\0', NULL},
+    };
+
     uint16_t command = 0;
-    bool subcommand_existed = false;
     uint16_t sub_command = 0;
+    bool subcommand_existed = false;
     const char *command_ptr = line;
 
-    if (gcode_code_f_callback)
+    for (uint8_t i = 0; lc_gcode_command_tag_map[i].tag; i++)
     {
-        while (lc_gcode_parser_get_command(&command_ptr, 'F', &command, &subcommand_existed, &sub_command))
-            gcode_code_f_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
-    }
+        command_ptr = line;
 
-    command_ptr = line;
-    if (gcode_code_g_callback)
-    {
-        while (lc_gcode_parser_get_command(&command_ptr, 'G', &command, &subcommand_existed, &sub_command))
-            gcode_code_g_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
-    }
-
-    command_ptr = line;
-    if (gcode_code_m_callback)
-    {
-        while (lc_gcode_parser_get_command(&command_ptr, 'M', &command, &subcommand_existed, &sub_command))
-            gcode_code_m_callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
+        if (lc_gcode_command_tag_map[i].callback)
+        {
+            while (lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_tag_map[i].tag, &command, &subcommand_existed, &sub_command))
+                lc_gcode_command_tag_map[i].callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
+        }
     }
 }
 /*********************************************************/
