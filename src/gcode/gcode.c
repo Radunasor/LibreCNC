@@ -99,7 +99,7 @@ bool lc_gcode_process_line()
         return false;
     }
 
-    char line[512] = {0};
+    char line[256] = {0};
     size_t line_num = 0;
     gcode_user_callbacks.lc_interface_gcode_get_line(line, &line_num);
 
