@@ -238,7 +238,9 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
     {
         lc_list_node_t *ex_tail = list->tail;
 
-        ex_tail->prev->next = NULL;
+        if (list->size > 1)
+            ex_tail->prev->next = NULL;
+
         list->tail = ex_tail->prev;
         data = ex_tail->data;
 
