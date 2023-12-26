@@ -33,7 +33,7 @@ typedef enum
     LC_CONFIG_KEY_HOMING_DEBOUNCE_DELAY,
     LC_CONFIG_KEY_HOMING_PULLOFF,
 
-    _LC_CONFIG_KEY_LAST
+    LC_CONFIG_KEY_LAST
 } lc_config_key_t;
 
 #endif
