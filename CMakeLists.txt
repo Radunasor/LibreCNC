@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21.1)
 
 project(librecnc LANGUAGES C CXX VERSION 4.5.6)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/static_analysis.cmake)
