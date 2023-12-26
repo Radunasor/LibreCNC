@@ -32,7 +32,7 @@ void lc_config_deinit()
 void lc_config_load_default_configs()
 {
     uint16_t conf_idx = 0;
-    while (default_config_table[conf_idx].key != _LC_CONFIG_KEY_LAST)
+    while (default_config_table[conf_idx].key != LC_CONFIG_KEY_LAST)
     {
         lc_config_set_float(default_config_table[conf_idx].key, default_config_table[conf_idx].value);
         conf_idx++;
