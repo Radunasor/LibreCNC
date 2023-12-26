@@ -1,7 +1,7 @@
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "logger.h"
-#include "data_structures/list/list.h"
 
 static void logger_default_sink(lc_logger_log_level_t level, const char *msg);
 static logger_sink_cb_t _sink_cb = logger_default_sink;
