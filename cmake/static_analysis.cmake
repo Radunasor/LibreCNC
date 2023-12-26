@@ -12,7 +12,7 @@ if(${STATIC_ANALYSIS_ENABLED_UPPER})
     else()
         message(STATUS "CMake_RUN_CLANG_TIDY for static analysis is ON")
 
-        set(CLANG_TIDY_COMMAND "${CLANG_TIDY_COMMAND}")
+        set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_COMMAND};--config-file=${CMAKE_SOURCE_DIR}/checks.clang-tidy)
 
         set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     endif()
