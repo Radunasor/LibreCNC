@@ -1,8 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "common_defs.h"
-
 #define LC_LOGGER_LOG_LEVEL_TRACE_D 1
 #define LC_LOGGER_LOG_LEVEL_DEBUG_D 2
 #define LC_LOGGER_LOG_LEVEL_INFO_D 3

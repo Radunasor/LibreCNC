@@ -8,7 +8,7 @@
 #ifndef LIBRECNC_H
 #define LIBRECNC_H
 
-#include <stdbool.h>
+#include "common_defs.h"
 #include "config/config.h"
 
 /**

@@ -139,4 +139,4 @@ TEST_P(LCMap, clear)
     EXPECT_EQ(lc_map_get_size(lcmap), expected.size());
 }
 
-INSTANTIATE_TEST_CASE_P(map_data_driven_test, LCMap, testing::ValuesIn(test_data));
+INSTANTIATE_TEST_SUITE_P(map_data_driven_test, LCMap, testing::ValuesIn(test_data));
