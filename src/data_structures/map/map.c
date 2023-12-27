@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stddef.h>
 
 #include "map.h"
 #include "data_structures/list/list.h"
@@ -12,7 +13,7 @@
 typedef struct
 {
     void *key_data;
-    size_t key_size;
+    int key_size;
 } lc_map_key_t;
 
 typedef struct
@@ -37,11 +38,11 @@ struct lc_map_st
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed);
+static uint32_t lc_map_murmurhash3(const void *key, const int len, const uint32_t seed);
 static inline void lc_map_resize_capacity(lc_map_t *map);
-static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size);
-static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size);
-static inline size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size);
+static inline lc_map_key_value_pair_t *lc_map_create_pair(const void *key_data, const int key_size, const void *value_data, const size_t value_size);
+static lc_map_key_value_pair_t *lc_map_get_pair(const lc_map_t *map, const void *key_data, const int key_size);
+static inline uint32_t lc_map_get_index(const lc_map_t *map, const void *key_data, const int key_size);
 /******************************************************/
 
 lc_map_t *lc_map_create()
@@ -73,7 +74,7 @@ void lc_map_destroy(lc_map_t *map)
     lc_free(map);
 }
 
-void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_t value_size)
+void lc_map_insert(lc_map_t *map, const void *key, const int key_size, const void *value, const size_t value_size)
 {
     lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
     if (pair)
@@ -104,7 +105,7 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_
     map->size++;
 }
 
-void lc_map_erase(lc_map_t *map, void *key, size_t key_size)
+void lc_map_erase(lc_map_t *map, const void *key, const int key_size)
 {
     lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
 
@@ -124,7 +125,7 @@ void lc_map_erase(lc_map_t *map, void *key, size_t key_size)
     map->size--;
 }
 
-bool lc_map_find(lc_map_t *map, void *key, size_t key_size, void **value, size_t *value_size)
+bool lc_map_find(lc_map_t *map, const void *key, const int key_size, void **value, size_t *value_size)
 {
     lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
 
@@ -183,7 +184,7 @@ void lc_map_clear(lc_map_t *map)
 /******************************************************/
 /***********static functions implementations***********/
 /******************************************************/
-static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed)
+static uint32_t lc_map_murmurhash3(const void *key, const int len, const uint32_t seed)
 {
     const uint8_t *data = (const uint8_t *)key;
     const int nblocks = len / 4;
@@ -194,7 +195,8 @@ static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed)
     const uint32_t c2 = 0x1b873593;
 
     // Body
-    const uint32_t *blocks = (const uint32_t *)(data + nblocks * 4);
+    const uint32_t *blocks = (const uint32_t *)(data + ((ptrdiff_t)nblocks * 4));
+
     for (int i = -nblocks; i; i++)
     {
         uint32_t k1 = blocks[i];
@@ -209,7 +211,7 @@ static uint32_t lc_map_murmurhash3(const void *key, int len, uint32_t seed)
     }
 
     // Tail
-    const uint8_t *tail = (const uint8_t *)(data + nblocks * 4);
+    const uint8_t *tail = (const uint8_t *)(data + ((ptrdiff_t)nblocks * 4));
     uint32_t k1 = 0;
     switch (len & 3)
     {
@@ -270,7 +272,7 @@ static inline void lc_map_resize_capacity(lc_map_t *map)
     map->capacity = new_capacity;
 }
 
-static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size)
+static inline lc_map_key_value_pair_t *lc_map_create_pair(const void *key_data, const int key_size, const void *value_data, const size_t value_size)
 {
     lc_map_key_value_pair_t *pair = (lc_map_key_value_pair_t *)lc_malloc(sizeof(lc_map_key_value_pair_t));
 
@@ -293,7 +295,7 @@ static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t
     return pair;
 }
 
-static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, size_t key_size)
+static lc_map_key_value_pair_t *lc_map_get_pair(const lc_map_t *map, const void *key_data, const int key_size)
 {
     uint32_t index = lc_map_get_index(map, key_data, key_size);
 
@@ -306,7 +308,7 @@ static lc_map_key_value_pair_t *lc_map_get_pair(lc_map_t *map, void *key_data, s
     return NULL;
 }
 
-static inline size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_size)
+static inline uint32_t lc_map_get_index(const lc_map_t *map, const void *key_data, const int key_size)
 {
     return lc_map_murmurhash3(key_data, key_size, 0) % map->capacity;
 }

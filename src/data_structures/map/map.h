@@ -25,7 +25,7 @@ typedef struct lc_map_st lc_map_t;
  *
  * This function type is used as a callback for iterating over key-value pairs in the hashmap.
  */
-typedef void (*lc_map_foreach_cb_t)(void *key_data, size_t key_size, void *value_data, size_t value_size, void *user_data);
+typedef void (*lc_map_foreach_cb_t)(void *key_data, uint32_t key_size, void *value_data, size_t value_size, void *user_data);
 
 /**
  * @brief Creates a new hashmap.
@@ -50,7 +50,7 @@ void lc_map_destroy(lc_map_t *map);
  * @param data The value associated with the key.
  * @param data_size The size of the value data.
  */
-void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *data, size_t data_size);
+void lc_map_insert(lc_map_t *map, const void *key, const int key_size, const void *value, const size_t value_size);
 
 /**
  * @brief Removes a key-value pair from the hashmap.
@@ -59,7 +59,7 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *data, size_t
  * @param key The key to be erased.
  * @param key_size The size of the key.
  */
-void lc_map_erase(lc_map_t *map, void *key, size_t key_size);
+void lc_map_erase(lc_map_t *map, const void *key, const int key_size);
 
 /**
  * @brief Finds a key-value pair in the hashmap.
@@ -71,7 +71,7 @@ void lc_map_erase(lc_map_t *map, void *key, size_t key_size);
  * @param value_size A pointer to store the size of the found value.
  * @return A boolean indicating whether the key was found in the hashmap.
  */
-bool lc_map_find(lc_map_t *map, void *key, size_t key_size, void **value, size_t *value_size);
+bool lc_map_find(lc_map_t *map, const void *key, const int key_size, void **value, size_t *value_size);
 
 /**
  * @brief Applies a callback function to each key-value pair in the hashmap.
