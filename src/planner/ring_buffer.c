@@ -1,5 +1,7 @@
 #include "ring_buffer.h"
 
+#if 0
+
 #include <string.h>
 
 #define LC_PLANNER_GCODE_RB_BUFFER_SIZE 10
@@ -15,7 +17,7 @@ struct _lc_planner_rb_t
 
 lc_planner_rb_t *lc_planner_rb_create(size_t size)
 {
-    lc_planner_rb_t *rb = _malloc(sizeof(lc_planner_rb_t));
+    lc_planner_rb_t *rb = lc_malloc(sizeof(lc_planner_rb_t));
 
     LC_ASSERT(rb, "ring buffer memory allocation failed!");
 
@@ -33,7 +35,7 @@ void lc_planner_rb_destroy(lc_planner_rb_t *rb)
 {
     LC_ASSERT(rb, "ring buffer pointer is NULL");
 
-    _free(rb);
+    lc_free(rb);
 }
 
 bool lc_planner_rb_insert(lc_planner_rb_t *rb, lc_gcode_data_t data)
@@ -75,3 +77,5 @@ bool lc_planner_rb_is_full(lc_planner_rb_t *rb)
 {
     return rb->count == rb->size;
 }
+
+#endif

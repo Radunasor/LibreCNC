@@ -3,7 +3,7 @@
 #include "planner.h"
 #include "ring_buffer.h"
 
-static lc_planner_rb_t *rb;
+// static lc_planner_rb_t *rb;
 static bool initialized = false;
 
 void lc_planner_init()
@@ -11,7 +11,7 @@ void lc_planner_init()
     if (initialized)
         return;
 
-    rb = lc_planner_rb_create(LC_PLANNER_OBJ_RING_BUFFER_SIZE);
+    // rb = lc_planner_rb_create(LC_PLANNER_OBJ_RING_BUFFER_SIZE);
 
     initialized = true;
 }
@@ -21,8 +21,8 @@ void lc_planner_deinit()
     if (!initialized)
         return;
 
-    lc_planner_rb_destroy(rb);
-    rb = NULL;
+    // lc_planner_rb_destroy(rb);
+    // rb = NULL;
 
     initialized = false;
 }
