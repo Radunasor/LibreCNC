@@ -48,7 +48,7 @@ bool lc_gcode_parser_get_command(const char **line, const char tag, uint16_t *co
         return false;
 
     *command = (uint16_t)command_val;
-    *sub_command_value = round(100 * (command_val - *command));
+    *sub_command_value = (uint16_t)roundf(100 * (command_val - (float)(*command)));
     *sub_command_value = *sub_command_value % 10 > 0 ? *sub_command_value : *sub_command_value / 10;
     *sub_command_existed = (*sub_command_value > 0);
 
