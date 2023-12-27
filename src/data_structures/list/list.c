@@ -223,6 +223,9 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
     {
         lc_list_node_t *ex_head = list->head;
 
+        if (!ex_head)
+            return NULL;
+
         if (list->size > 1)
             ex_head->next->prev = NULL;
 
@@ -237,6 +240,9 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
     if (node_to_erase == list->tail)
     {
         lc_list_node_t *ex_tail = list->tail;
+
+        if (!ex_tail)
+            return NULL;
 
         if (list->size > 1)
             ex_tail->prev->next = NULL;
