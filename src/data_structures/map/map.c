@@ -6,8 +6,8 @@
 // Macros for endianness handling
 #define IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 
-#define INITIAL_CAPACITY 32
-#define LOAD_FACTOR_THRESHOLD 0.75
+#define INITIAL_CAPACITY (size_t)32
+#define LOAD_FACTOR_THRESHOLD (float)0.75
 
 typedef struct
 {
@@ -27,7 +27,7 @@ typedef struct
     lc_map_value_t *value;
 } lc_map_key_value_pair_t;
 
-struct _lc_map_t
+struct lc_map_st
 {
     lc_list_t **buckets_list;
     size_t capacity;
@@ -46,7 +46,7 @@ static inline size_t lc_map_get_index(lc_map_t *map, void *key_data, size_t key_
 
 lc_map_t *lc_map_create()
 {
-    lc_map_t *map = (lc_map_t *)_malloc(sizeof(lc_map_t));
+    lc_map_t *map = (lc_map_t *)lc_malloc(sizeof(lc_map_t));
 
     LC_ASSERT(map, "Map memory allocation failed!");
 
@@ -69,8 +69,8 @@ void lc_map_destroy(lc_map_t *map)
     for (size_t i = 0; i < map->capacity; i++)
         lc_list_destroy(map->buckets_list[i]);
 
-    _free(map->buckets_list);
-    _free(map);
+    lc_free(map->buckets_list);
+    lc_free(map);
 }
 
 void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_t value_size)
@@ -78,9 +78,9 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_
     lc_map_key_value_pair_t *pair = lc_map_get_pair(map, key, key_size);
     if (pair)
     {
-        _free(pair->value->value_data);
+        lc_free(pair->value->value_data);
 
-        pair->value->value_data = _malloc(value_size);
+        pair->value->value_data = lc_malloc(value_size);
 
         LC_ASSERT(pair->value, "map value type memory allocation failed!");
 
@@ -92,7 +92,7 @@ void lc_map_insert(lc_map_t *map, void *key, size_t key_size, void *value, size_
     }
 
     // Check load factor and resize if necessary
-    if ((double)map->size / map->capacity > LOAD_FACTOR_THRESHOLD)
+    if ((float)map->size / (float)map->capacity > LOAD_FACTOR_THRESHOLD)
         lc_map_resize_capacity(map);
 
     uint32_t index = lc_map_get_index(map, key, key_size);
@@ -115,11 +115,11 @@ void lc_map_erase(lc_map_t *map, void *key, size_t key_size)
 
     (void)lc_list_pop_at(map->buckets_list[list_index], lc_list_get_index(map->buckets_list[list_index], pair));
 
-    _free(pair->key->key_data);
-    _free(pair->key);
-    _free(pair->value->value_data);
-    _free(pair->value);
-    _free(pair);
+    lc_free(pair->key->key_data);
+    lc_free(pair->key);
+    lc_free(pair->value->value_data);
+    lc_free(pair->value);
+    lc_free(pair);
 
     map->size--;
 }
@@ -167,11 +167,11 @@ void lc_map_clear(lc_map_t *map)
 
         LIST_FOREACH(map->buckets_list[i], pair)
         {
-            _free(pair->key->key_data);
-            _free(pair->key);
-            _free(pair->value->value_data);
-            _free(pair->value);
-            _free(pair);
+            lc_free(pair->key->key_data);
+            lc_free(pair->key);
+            lc_free(pair->value->value_data);
+            lc_free(pair->value);
+            lc_free(pair);
         }
 
         lc_list_clear(map->buckets_list[i]);
@@ -264,7 +264,7 @@ static inline void lc_map_resize_capacity(lc_map_t *map)
         lc_list_destroy(map->buckets_list[i]);
     }
 
-    _free(map->buckets_list);
+    lc_free(map->buckets_list);
 
     map->buckets_list = new_bucket_list;
     map->capacity = new_capacity;
@@ -272,21 +272,21 @@ static inline void lc_map_resize_capacity(lc_map_t *map)
 
 static inline lc_map_key_value_pair_t *lc_map_create_pair(void *key_data, size_t key_size, void *value_data, size_t value_size)
 {
-    lc_map_key_value_pair_t *pair = (lc_map_key_value_pair_t *)_malloc(sizeof(lc_map_key_value_pair_t));
+    lc_map_key_value_pair_t *pair = (lc_map_key_value_pair_t *)lc_malloc(sizeof(lc_map_key_value_pair_t));
 
     LC_ASSERT(pair, "map key value pair memory allocation failed!");
 
-    pair->key = (lc_map_key_t *)_malloc(sizeof(lc_map_key_t));
+    pair->key = (lc_map_key_t *)lc_malloc(sizeof(lc_map_key_t));
     LC_ASSERT(pair->key, "map key type memory allocation failed!");
     pair->key->key_size = key_size;
-    pair->key->key_data = _malloc(key_size);
+    pair->key->key_data = lc_malloc(key_size);
     LC_ASSERT(pair->key->key_data, "map key data memory allocation failed!");
     memcpy(pair->key->key_data, key_data, key_size);
 
-    pair->value = (lc_map_value_t *)_malloc(sizeof(lc_map_value_t));
+    pair->value = (lc_map_value_t *)lc_malloc(sizeof(lc_map_value_t));
     LC_ASSERT(pair->value, "map value type memory allocation failed!");
     pair->value->value_size = value_size;
-    pair->value->value_data = _malloc(value_size);
+    pair->value->value_data = lc_malloc(value_size);
     LC_ASSERT(pair->value->value_data, "map value data memory allocation failed!");
     memcpy(pair->value->value_data, value_data, value_size);
 

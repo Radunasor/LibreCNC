@@ -10,7 +10,7 @@
 
 #include "common_defs.h"
 
-#define LIST_FOREACH(list, node_data) for (size_t fei = 0; fei < lc_list_get_size(list) && (node_data = lc_list_find_at(list, fei), 1); ++fei)
+#define LIST_FOREACH(list, node_data) for (size_t fei = 0; fei < lc_list_get_size(list) && ((node_data) = lc_list_find_at(list, fei), 1); ++fei)
 
 /**
  * @struct lc_list_t
@@ -19,7 +19,7 @@
  * An instance of this structure is used to represent a linked list.
  * The details of the implementation are hidden from the users.
  */
-typedef struct _lc_list_t lc_list_t;
+typedef struct lc_list_st lc_list_t;
 
 /**
  * @brief Creates a new linked list.

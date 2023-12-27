@@ -18,11 +18,11 @@ typedef enum
 } bool;
 #endif
 
-#define _malloc malloc
-#define _free free
+#define lc_malloc malloc
+#define lc_free free
 
-#define MIN(x, y) x < y ? x : y
-#define MAX(x, y) x < y ? y : x
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MAX(x, y) ((x) < (y) ? (y) : (x))
 
 #ifdef NDEBUG
 

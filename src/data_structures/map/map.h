@@ -17,7 +17,7 @@
  * An instance of this structure is used to represent a hashmap.
  * The details of the implementation are hidden from the users.
  */
-typedef struct _lc_map_t lc_map_t;
+typedef struct lc_map_st lc_map_t;
 
 /**
  * @typedef lc_map_foreach_cb_t

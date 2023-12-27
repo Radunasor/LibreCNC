@@ -2,16 +2,16 @@
 
 #include "list.h"
 
-typedef struct _lc_list_node_t lc_list_node_t;
+typedef struct lc_list_node_st lc_list_node_t;
 
-struct _lc_list_node_t
+struct lc_list_node_st
 {
     void *data;
     lc_list_node_t *next;
     lc_list_node_t *prev;
 };
 
-struct _lc_list_t
+struct lc_list_st
 {
     lc_list_node_t *head;
     lc_list_node_t *tail;
@@ -19,7 +19,7 @@ struct _lc_list_t
     size_t size;
 };
 
-#define LIST_INTERNAL_RANGELOOP(list, node) for (lc_list_node_t *node = list->head; node != NULL; node = node->next)
+#define LIST_INTERNAL_RANGELOOP(list, node) for (lc_list_node_t * (node) = (list)->head; (node) != NULL; (node) = (node)->next)
 
 /******************************************************/
 /***********static functions declarations**************/
@@ -31,7 +31,7 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase);
 
 lc_list_t *lc_list_create()
 {
-    lc_list_t *list = _malloc(sizeof(lc_list_t));
+    lc_list_t *list = lc_malloc(sizeof(lc_list_t));
 
     LC_ASSERT(list, "List memory allocation returned NULL.");
 
@@ -43,12 +43,12 @@ lc_list_t *lc_list_create()
 void lc_list_destroy(lc_list_t *list)
 {
     lc_list_clear(list);
-    _free(list);
+    lc_free(list);
 }
 
 void lc_list_insert_front(lc_list_t *list, void *data)
 {
-    lc_list_node_t *new_node = _malloc(sizeof(lc_list_node_t));
+    lc_list_node_t *new_node = lc_malloc(sizeof(lc_list_node_t));
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
@@ -73,7 +73,7 @@ void lc_list_insert_front(lc_list_t *list, void *data)
 
 void lc_list_insert_back(lc_list_t *list, void *data)
 {
-    lc_list_node_t *new_node = _malloc(sizeof(lc_list_node_t));
+    lc_list_node_t *new_node = lc_malloc(sizeof(lc_list_node_t));
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
@@ -100,7 +100,7 @@ void lc_list_insert_at(lc_list_t *list, size_t index, void *data)
 {
     LC_ASSERT(index < list->size, "list insert out of range");
 
-    lc_list_node_t *new_node = _malloc(sizeof(lc_list_node_t));
+    lc_list_node_t *new_node = lc_malloc(sizeof(lc_list_node_t));
 
     LC_ASSERT(new_node, "List Node memory allocation returned NULL.");
 
@@ -229,7 +229,7 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
         list->head = ex_head->next;
         data = ex_head->data;
 
-        _free(ex_head);
+        lc_free(ex_head);
 
         return data;
     }
@@ -244,7 +244,7 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
         list->tail = ex_tail->prev;
         data = ex_tail->data;
 
-        _free(ex_tail);
+        lc_free(ex_tail);
         return data;
     }
 
@@ -252,7 +252,7 @@ static void *lc_list_node_erase(lc_list_t *list, lc_list_node_t *node_to_erase)
     node_to_erase->next->prev = node_to_erase->prev;
     data = node_to_erase->data;
 
-    _free(node_to_erase);
+    lc_free(node_to_erase);
 
     return data;
 }
