@@ -32,7 +32,7 @@ typedef enum
     LC_GCODE_TYPE_M,
     LC_GCODE_TYPE_F,
 
-    _LC_GCODE_TYPE_LAST,
+    LC_GCODE_TYPE_LAST,
 } lc_gcode_code_type_t;
 
 typedef void (*lc_gcode_cb_t)(const uint16_t command, const bool sub_command_existed, const uint16_t sub_command, const lc_gcode_attrbute_value_t *values);

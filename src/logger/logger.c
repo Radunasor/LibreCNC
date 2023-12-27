@@ -4,7 +4,7 @@
 #include "logger.h"
 
 static void logger_default_sink(lc_logger_log_level_t level, const char *msg);
-static logger_sink_cb_t _sink_cb = logger_default_sink;
+static logger_sink_cb_t sink_cb = logger_default_sink;
 
 void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
 {
@@ -16,13 +16,13 @@ void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...)
     vsnprintf(formatted_text, sizeof(formatted_text), format, args);
     va_end(args);
 
-    if (_sink_cb)
-        _sink_cb(level, formatted_text);
+    if (sink_cb)
+        sink_cb(level, formatted_text);
 }
 
-void lc_logger_set_sink_cb(logger_sink_cb_t sink_cb)
+void lc_logger_set_sink_cb(logger_sink_cb_t user_sink_cb)
 {
-    _sink_cb = sink_cb;
+    sink_cb = user_sink_cb;
 }
 
 static void logger_default_sink(lc_logger_log_level_t level, const char *msg)

@@ -52,6 +52,6 @@ typedef void (*logger_sink_cb_t)(lc_logger_log_level_t level, const char *msg);
 
 void lc_logger_log(const lc_logger_log_level_t level, const char *format, ...);
 
-void lc_logger_set_sink_cb(logger_sink_cb_t sink_cb);
+void lc_logger_set_sink_cb(logger_sink_cb_t user_sink_cb);
 
 #endif
