@@ -7,15 +7,21 @@
 
 static bool initialized = false;
 
+static lc_gcode_obj_t gcode_obj = {
+    .command_number = 0,
+    .command_type = LC_GCODE_TYPE_NONE,
+    .command_values = NULL,
+    .subcommand_existed = false,
+    .sub_command_number = 0,
+};
+
 static lc_interface_gcode_t gcode_user_callbacks = {
     .lc_interface_gcode_deinit = NULL,
     .lc_interface_gcode_init = NULL,
     .lc_interface_gcode_get_line = NULL,
 };
 
-static lc_gcode_cb_t gcode_code_g_callback = NULL;
-static lc_gcode_cb_t gcode_code_m_callback = NULL;
-static lc_gcode_cb_t gcode_code_f_callback = NULL;
+static lc_gcode_cb_t gcode_parser_callback = NULL;
 
 static lc_gcode_attrbute_value_t line_gcode_attributes =
     {
@@ -70,32 +76,18 @@ bool lc_gcode_get_initialized()
     return initialized;
 }
 
-void lc_gcode_set_callback(lc_gcode_code_type_t type, lc_gcode_cb_t cb)
+void lc_gcode_set_parse_callback(lc_gcode_cb_t parse_cb)
 {
-    switch (type)
-    {
-    case LC_GCODE_TYPE_G:
-        gcode_code_g_callback = cb;
-        break;
-    case LC_GCODE_TYPE_M:
-        gcode_code_m_callback = cb;
-        break;
-    case LC_GCODE_TYPE_F:
-        gcode_code_f_callback = cb;
-        break;
-    default:
-        LC_LOG_ERROR("undefined gcode code type!");
-        break;
-    }
+        gcode_parser_callback = parse_cb;
 }
 
 bool lc_gcode_process_line()
 {
     CHECK_INITIALIIZED
 
-    if (!gcode_code_g_callback || !gcode_code_m_callback || !gcode_code_f_callback)
+    if (!gcode_parser_callback)
     {
-        LC_LOG_ERROR("no callback set for parsed G, F or M codes");
+        LC_LOG_ERROR("no callback set for parsed gcodes");
         return false;
     }
 
@@ -137,31 +129,32 @@ static void lc_gcode_parse_line(const char *line)
     for (uint8_t i = 0; lc_gcode_parser_tag_map[i].tag; i++)
         lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->value));
 
-    struct
-    {
-        const char tag;
-        lc_gcode_cb_t callback;
-    } lc_gcode_command_tag_map[] = {
-        {'F', gcode_code_f_callback},
-        {'M', gcode_code_m_callback},
-        {'G', gcode_code_g_callback},
+    lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
+        LC_GCODE_TYPE_F,
+        LC_GCODE_TYPE_M,
+        LC_GCODE_TYPE_G,
 
-        {'\0', NULL},
-    };
+        LC_GCODE_TYPE_LAST,
+    }; // order is important
 
     uint16_t command = 0;
     uint16_t sub_command = 0;
     bool subcommand_existed = false;
     const char *command_ptr = line;
 
-    for (uint8_t i = 0; lc_gcode_command_tag_map[i].tag; i++)
+    for (uint8_t i = 0; lc_gcode_command_type_arr[i] != LC_GCODE_TYPE_LAST; i++)
     {
         command_ptr = line;
 
-        if (lc_gcode_command_tag_map[i].callback)
+        while (lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_type_arr[i], &command, &subcommand_existed, &sub_command))
         {
-            while (lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_tag_map[i].tag, &command, &subcommand_existed, &sub_command))
-                lc_gcode_command_tag_map[i].callback(command, subcommand_existed, sub_command, &line_gcode_attributes);
+            gcode_obj.command_type = lc_gcode_command_type_arr[i];
+            gcode_obj.command_number = command;
+            gcode_obj.subcommand_existed = subcommand_existed;
+            gcode_obj.sub_command_number = sub_command;
+            gcode_obj.command_values = line_gcode_attributes;
+
+            gcode_parser_callback(&gcode_obj);
         }
     }
 }

@@ -28,6 +28,28 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
     return true;
 }
 
+static const char lc_gcode_command_type_to_chr(lc_gcode_command_type_t command_type)
+{
+    char tag = 0;
+
+    switch (command_type)
+    {
+    case LC_GCODE_TYPE_F:
+        tag = 'F';
+        break;
+    case LC_GCODE_TYPE_M:
+        tag = 'M';
+        break;
+    case LC_GCODE_TYPE_G:
+        tag = 'G';
+        break;
+    default:
+        break;
+    }
+
+    return tag;
+}
+
 class LCGcode : public ::testing::Test
 {
 protected:
@@ -49,12 +71,11 @@ protected:
 
 TEST_F(LCGcode, initial_t)
 {
-    lc_gcode_set_callback(LC_GCODE_TYPE_G, [](uint16_t command, bool subcommand_existed, uint16_t sub_command, const lc_gcode_attrbute_value_t *values)
-                          { LC_LOG_INFO("Gcode command G parsed with Command %d%s", command, subcommand_existed ? (" and subcommand " + std::to_string(sub_command)).c_str() : "") });
-    lc_gcode_set_callback(LC_GCODE_TYPE_F, [](uint16_t command, bool subcommand_existed, uint16_t sub_command, const lc_gcode_attrbute_value_t *values)
-                          { LC_LOG_INFO("Gcode command F parsed with Command %d%s", command, subcommand_existed ? (" and subcommand " + std::to_string(sub_command)).c_str() : "") });
-    lc_gcode_set_callback(LC_GCODE_TYPE_M, [](uint16_t command, bool subcommand_existed, uint16_t sub_command, const lc_gcode_attrbute_value_t *values)
-                          { LC_LOG_INFO("Gcode command M parsed with Command %d%s", command, subcommand_existed ? (" and subcommand " + std::to_string(sub_command)).c_str() : "") });
+    lc_gcode_set_parse_callback([](const lc_gcode_obj_t *parsed_gcode)
+                                { LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
+                                              lc_gcode_command_type_to_chr(parsed_gcode->command_type),
+                                              parsed_gcode->command_number,
+                                              parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "") });
 
     lc_gcode_process_line();
 }

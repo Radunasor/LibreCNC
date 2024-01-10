@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "parser.h"
+#include "gcode.h"
 
 static inline char *lc_parser_get_tag_val(const char *line, const char tag, float *value)
 {
@@ -34,9 +35,35 @@ bool lc_gcode_parser_get_value(const char *line, const char tag, float *value)
     return lc_parser_get_tag_val(line, tag, value) != NULL;
 }
 
-bool lc_gcode_parser_get_command(const char **line, const char tag, uint16_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
+static const char lc_gcode_parser_get_gcode_char_tag(lc_gcode_command_type_t command_type)
+{
+    char tag = 0;
+
+    switch (command_type)
+    {
+    case LC_GCODE_TYPE_F:
+        tag = 'F';
+        break;
+    case LC_GCODE_TYPE_M:
+        tag = 'M';
+        break;
+    case LC_GCODE_TYPE_G:
+        tag = 'G';
+        break;
+    default:
+        break;
+    }
+
+    return tag;
+}
+
+bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint16_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
 {
     if (line == NULL)
+        return false;
+
+    const char tag = lc_gcode_parser_get_gcode_char_tag(command_type);
+    if(!tag)
         return false;
 
     *sub_command_existed = false;
