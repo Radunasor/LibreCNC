@@ -6,7 +6,11 @@
 static lc_planner_rb_t *rb;
 static bool initialized = false;
 
+/*****************************************************/
+/***********static functions defenitions**************/
+/*****************************************************/
 static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode);
+/*****************************************************/
 
 void lc_planner_init()
 {
@@ -36,7 +40,11 @@ bool lc_planner_get_initialized()
     return initialized;
 }
 
+/*********************************************************/
+/***********static functions implementations**************/
+/*********************************************************/
 static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
 {
     lc_planner_rb_insert(rb, parsed_gcode);
 }
+/*********************************************************/
