@@ -19,7 +19,7 @@ bool lc_interface_gcode_deinit()
 static int ln_number = 0;
 bool lc_interface_gcode_get_line(char *line, size_t *line_number)
 {
-    const char *line_ptr = "G1 G5.12 G2.1 X5 Y6 Z7 T9 F1000 M123 \n";
+    const char *line_ptr = "G1 G5.12 G2.1 X5 Y6 Z7 T9 F1000 M123";
     *line_number = ln_number++;
     memcpy(line, line_ptr, strlen(line_ptr));
 
