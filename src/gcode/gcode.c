@@ -42,7 +42,7 @@ static lc_gcode_attrbute_value_t line_gcode_attributes =
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static void lc_gcode_parse_line(const char *line);
+static void lc_gcode_parse_line(char *line);
 /******************************************************/
 
 void lc_gcode_init(lc_interface_gcode_t *gcode_cbs)
@@ -105,8 +105,10 @@ bool lc_gcode_process_line()
 /*********************************************************/
 /***********static functions implementations**************/
 /*********************************************************/
-static void lc_gcode_parse_line(const char *line)
+static void lc_gcode_parse_line(char *line)
 {
+    lc_gcode_parser_mark_comments(line);
+
     struct lc_gcode_parse_tag_map
     {
         const char tag;

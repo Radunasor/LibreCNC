@@ -22,6 +22,8 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
     const char *line_ptr[] = {
                               {"G1 G5.12 G2.1 X5 Y6 Z7 T9 F1000 M123"},
                               {"G2.1 G10.1 G100.0 X5000 Y12345 Z1.12345 T15 F500000 M100.100"},
+                              {";G1 X10 Y10 ; this line should be ignored!"},
+                              {"G1 F50 ; these values should be ignored: G200 F100"},
                               NULL,
                               };
 

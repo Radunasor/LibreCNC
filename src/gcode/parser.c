@@ -5,7 +5,61 @@
 #include "parser.h"
 #include "gcode.h"
 
-static inline char *lc_parser_get_tag_val(const char *line, const char tag, float *value)
+/******************************************************/
+/***********static functions declarations**************/
+/******************************************************/
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, float *value);
+static const char lc_gcode_parser_get_tag_char_from_cmd_type(lc_gcode_command_type_t command_type);
+/******************************************************/
+void lc_gcode_parser_mark_comments(char *line)
+{
+    char comments_chars[] = ";(";
+
+    char *comment_pos = strpbrk(line, comments_chars);
+
+    if(comment_pos)
+        *comment_pos = '\0';
+}
+
+bool lc_gcode_parser_get_value(const char *line, const char tag, float *value)
+{
+    if (!line || !value)
+        return false;
+
+    return lc_gcode_parser_get_tag_val(line, tag, value) != NULL;
+}
+
+bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint32_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
+{
+    if (line == NULL)
+        return false;
+
+    const char tag = lc_gcode_parser_get_tag_char_from_cmd_type(command_type);
+    if(!tag)
+        return false;
+
+    *sub_command_existed = false;
+
+    float command_val = 0;
+    char *end_ptr = lc_gcode_parser_get_tag_val(*line, tag, &command_val);
+
+    if (!end_ptr)
+        return false;
+
+    *command = (uint32_t)command_val;
+    *sub_command_value = (uint16_t)roundf(100 * (command_val - (float)(*command)));
+    *sub_command_value = *sub_command_value % 10 > 0 ? *sub_command_value : *sub_command_value / 10;
+    *sub_command_existed = (*sub_command_value > 0);
+
+    *line = end_ptr;
+
+    return true;
+}
+
+/*********************************************************/
+/***********static functions implementations**************/
+/*********************************************************/
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, float *value)
 {
     const char *char_ptr = strchr(line, tag);
 
@@ -27,15 +81,7 @@ static inline char *lc_parser_get_tag_val(const char *line, const char tag, floa
     return end_ptr;
 }
 
-bool lc_gcode_parser_get_value(const char *line, const char tag, float *value)
-{
-    if (!line || !value)
-        return false;
-
-    return lc_parser_get_tag_val(line, tag, value) != NULL;
-}
-
-static const char lc_gcode_parser_get_gcode_char_tag(lc_gcode_command_type_t command_type)
+static const char lc_gcode_parser_get_tag_char_from_cmd_type(lc_gcode_command_type_t command_type)
 {
     char tag = 0;
 
@@ -56,30 +102,4 @@ static const char lc_gcode_parser_get_gcode_char_tag(lc_gcode_command_type_t com
 
     return tag;
 }
-
-bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint32_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
-{
-    if (line == NULL)
-        return false;
-
-    const char tag = lc_gcode_parser_get_gcode_char_tag(command_type);
-    if(!tag)
-        return false;
-
-    *sub_command_existed = false;
-
-    float command_val = 0;
-    char *end_ptr = lc_parser_get_tag_val(*line, tag, &command_val);
-
-    if (!end_ptr)
-        return false;
-
-    *command = (uint32_t)command_val;
-    *sub_command_value = (uint16_t)roundf(100 * (command_val - (float)(*command)));
-    *sub_command_value = *sub_command_value % 10 > 0 ? *sub_command_value : *sub_command_value / 10;
-    *sub_command_existed = (*sub_command_value > 0);
-
-    *line = end_ptr;
-
-    return true;
-}
+/*********************************************************/
