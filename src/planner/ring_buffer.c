@@ -4,13 +4,13 @@
 
 #define LC_PLANNER_GCODE_RB_BUFFER_SIZE 10
 
-struct _lc_planner_rb_t
+struct lc_planner_rb_st
 {
     lc_gcode_obj_t buffer[LC_PLANNER_GCODE_RB_BUFFER_SIZE];
-    int head;
-    int tail;
-    int size;
-    int count; // Add a count variable to keep track of the number of elements
+    size_t head;
+    size_t tail;
+    size_t size;
+    size_t count; // Add a count variable to keep track of the number of elements
 };
 
 lc_planner_rb_t *lc_planner_rb_create(size_t size)

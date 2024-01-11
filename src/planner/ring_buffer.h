@@ -5,7 +5,7 @@
 #include "gcode/gcode.h"
 
 
-typedef struct _lc_planner_rb_t lc_planner_rb_t;
+typedef struct lc_planner_rb_st lc_planner_rb_t;
 
 lc_planner_rb_t *lc_planner_rb_create(size_t size);
 void lc_planner_rb_destroy(lc_planner_rb_t *rb);
