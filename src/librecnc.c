@@ -1,6 +1,7 @@
 #include "librecnc.h"
 
 #include "config/config.h"
+#include "planner/planner.h"
 
 static bool initialized = false;
 
@@ -32,4 +33,5 @@ void lc_deinit()
 
 void lc_handler()
 {
+    lc_planner_plan();
 }

@@ -9,5 +9,6 @@
 void lc_planner_init();
 void lc_planner_deinit();
 bool lc_planner_get_initialized();
+void lc_planner_plan();
 
 #endif

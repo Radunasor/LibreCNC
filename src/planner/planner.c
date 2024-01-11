@@ -6,11 +6,11 @@
 static lc_planner_rb_t *rb;
 static bool initialized = false;
 
-/*****************************************************/
-/***********static functions defenitions**************/
-/*****************************************************/
+/******************************************************/
+/***********static functions declarations**************/
+/******************************************************/
 static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode);
-/*****************************************************/
+/******************************************************/
 
 void lc_planner_init()
 {
@@ -38,6 +38,11 @@ void lc_planner_deinit()
 bool lc_planner_get_initialized()
 {
     return initialized;
+}
+
+void lc_planner_plan()
+{
+
 }
 
 /*********************************************************/
