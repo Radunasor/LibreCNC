@@ -16,14 +16,23 @@ bool lc_interface_gcode_deinit()
     return true;
 }
 
-static int ln_number = 0;
 bool lc_interface_gcode_get_line(char *line, size_t *line_number)
 {
-    const char *line_ptr = "G1 G5.12 G2.1 X5 Y6 Z7 T9 F1000 M123";
-    *line_number = ln_number++;
-    memcpy(line, line_ptr, strlen(line_ptr));
+    static int int_line_number = 0;
+    const char *line_ptr[] = {
+                              {"G1 G5.12 G2.1 X5 Y6 Z7 T9 F1000 M123"},
+                              {"G2.1 G10.1 G100.0 X5000 Y12345 Z1.12345 T15 F500000 M100.100"},
+                              NULL,
+                              };
 
-    LC_LOG_INFO("requested line is: %s", line_ptr);
+    if(!line_ptr[int_line_number])
+        return false;
+
+    memcpy(line, line_ptr[int_line_number], strlen(line_ptr[int_line_number]));
+
+    LC_LOG_INFO("requested line is: %s", line_ptr[int_line_number]);
+
+    *line_number = int_line_number++;
 
     return true;
 }
@@ -77,5 +86,5 @@ TEST_F(LCGcode, initial_t)
                                               parsed_gcode->command_number,
                                               parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "") });
 
-    lc_gcode_process_line();
+    while (lc_gcode_process_line());
 }
