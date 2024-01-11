@@ -139,7 +139,7 @@ static void lc_gcode_parse_line(const char *line)
         LC_GCODE_TYPE_LAST,
     }; // order is important
 
-    uint16_t command = 0;
+    uint32_t command = 0;
     uint16_t sub_command = 0;
     bool subcommand_existed = false;
     const char *command_ptr = line;

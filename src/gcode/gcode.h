@@ -39,7 +39,7 @@ typedef enum lc_gcode_command_type_st
 typedef struct lc_gcode_obj_st
 {
     lc_gcode_command_type_t command_type;
-    uint16_t command_number;
+    uint32_t command_number;
     bool subcommand_existed;
     uint16_t sub_command_number;
     lc_gcode_attrbute_value_t command_values;

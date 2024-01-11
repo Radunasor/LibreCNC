@@ -57,7 +57,7 @@ static const char lc_gcode_parser_get_gcode_char_tag(lc_gcode_command_type_t com
     return tag;
 }
 
-bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint16_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
+bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint32_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
 {
     if (line == NULL)
         return false;
@@ -74,7 +74,7 @@ bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_
     if (!end_ptr)
         return false;
 
-    *command = (uint16_t)command_val;
+    *command = (uint32_t)command_val;
     *sub_command_value = (uint16_t)roundf(100 * (command_val - (float)(*command)));
     *sub_command_value = *sub_command_value % 10 > 0 ? *sub_command_value : *sub_command_value / 10;
     *sub_command_existed = (*sub_command_value > 0);
