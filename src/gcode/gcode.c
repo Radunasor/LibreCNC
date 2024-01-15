@@ -131,7 +131,7 @@ static void lc_gcode_parse_line(char *line)
     };
 
     for (uint8_t i = 0; lc_gcode_parser_tag_map[i].tag; i++)
-        lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->value));
+        lc_gcode_parser_tag_map[i].attr->existed = lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->value));
 
     lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
         LC_GCODE_TYPE_F,
