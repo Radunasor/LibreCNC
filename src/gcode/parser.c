@@ -8,7 +8,7 @@
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, float *value);
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, bool *existed, float *value);
 static const char lc_gcode_parser_get_tag_char_from_cmd_type(lc_gcode_command_type_t command_type);
 /******************************************************/
 void lc_gcode_parser_mark_comments(char *line)
@@ -21,15 +21,25 @@ void lc_gcode_parser_mark_comments(char *line)
         *comment_pos = '\0';
 }
 
-bool lc_gcode_parser_get_value(const char *line, const char tag, float *value)
+bool lc_gcode_parser_get_value(const char *line, const char tag, bool *existed, float *value)
 {
     if (!line || !value)
         return false;
 
-    return lc_gcode_parser_get_tag_val(line, tag, value) != NULL;
+    const char *end_ptr = lc_gcode_parser_get_tag_val(line, tag, existed, value);
+
+    if(*existed && !end_ptr)
+        return false;
+    
+    return true;
 }
 
-bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_t command_type, uint32_t *command, bool *sub_command_existed, uint16_t *sub_command_value)
+bool lc_gcode_parser_get_command(const char **line,
+                                 const lc_gcode_command_type_t command_type,
+                                 bool *command_existed,
+                                 uint32_t *command,
+                                 bool *sub_command_existed,
+                                 uint16_t *sub_command_value)
 {
     if (line == NULL)
         return false;
@@ -38,12 +48,12 @@ bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_
     if(!tag)
         return false;
 
+    float command_val = 0.0f;
     *sub_command_existed = false;
 
-    float command_val = 0;
-    char *end_ptr = lc_gcode_parser_get_tag_val(*line, tag, &command_val);
+    char *end_ptr = lc_gcode_parser_get_tag_val(*line, tag, command_existed, &command_val);
 
-    if (!end_ptr)
+    if(*command_existed && !end_ptr)
         return false;
 
     *command = (uint32_t)command_val;
@@ -59,12 +69,17 @@ bool lc_gcode_parser_get_command(const char **line, const lc_gcode_command_type_
 /*********************************************************/
 /***********static functions implementations**************/
 /*********************************************************/
-static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, float *value)
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, bool *existed, float *value)
 {
+    *existed = false;
+    *value = 0;
+
     const char *char_ptr = strchr(line, tag);
 
     if (!char_ptr)
         return NULL;
+
+    *existed = true;
 
     if (!isdigit(*(char_ptr + 1)))
     {
