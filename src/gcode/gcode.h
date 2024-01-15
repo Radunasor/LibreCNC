@@ -52,5 +52,6 @@ void lc_gcode_deinit();
 bool lc_gcode_get_initialized();
 
 void lc_gcode_set_parse_callback(lc_gcode_cb_t parse_cb);
+bool lc_gcode_process_get_end_of_file();
 bool lc_gcode_process_line();
 #endif

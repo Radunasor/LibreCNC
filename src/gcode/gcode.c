@@ -19,6 +19,7 @@ static lc_interface_gcode_t gcode_user_callbacks = {
     .lc_interface_gcode_deinit = NULL,
     .lc_interface_gcode_init = NULL,
     .lc_interface_gcode_get_line = NULL,
+    .lc_interface_gcode_get_end_of_file = NULL,
 };
 
 static lc_gcode_cb_t gcode_parser_callback = NULL;
@@ -50,9 +51,13 @@ void lc_gcode_init(lc_interface_gcode_t *gcode_cbs)
     if (initialized)
         return;
 
-    if (!gcode_cbs)
+    if (!gcode_cbs                                ||
+        !gcode_cbs->lc_interface_gcode_deinit     ||
+        !gcode_cbs->lc_interface_gcode_init       ||
+        !gcode_cbs->lc_interface_gcode_get_line   ||
+        !gcode_cbs->lc_interface_gcode_get_end_of_file)
     {
-        LC_LOG_ERROR("gcode module initialized with NULL interface pointer");
+        LC_LOG_ERROR("gcode module initialized with NULL or partially developed interface pointer");
         return;
     }
 
@@ -79,6 +84,13 @@ bool lc_gcode_get_initialized()
 void lc_gcode_set_parse_callback(lc_gcode_cb_t parse_cb)
 {
     gcode_parser_callback = parse_cb;
+}
+
+bool lc_gcode_process_get_end_of_file()
+{
+    CHECK_INITIALIIZED
+
+    return gcode_user_callbacks.lc_interface_gcode_get_end_of_file();
 }
 
 bool lc_gcode_process_line()
