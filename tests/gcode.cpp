@@ -16,6 +16,12 @@ bool lc_interface_gcode_deinit()
     return true;
 }
 
+static bool eof = false;
+bool lc_interface_gcode_get_enf_of_file()
+{
+    return eof;
+}
+
 bool lc_interface_gcode_get_line(char *line, size_t *line_number)
 {
     static int int_line_number = 0;
@@ -24,17 +30,18 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
         "G2.1 G10.1 G100.0 X5000 Y12345 Z1.12345 T15 F500000 M100.100",
         ";G1 X10 Y10 ; this line should be ignored!",
         "G1 F50 ; these values should be ignored: G200 F100",
+        "G1 F50 Xa Y10 Z15 ; this line has syntax error in it, should cause parse error",
         NULL,
     };
-
-    if (!line_ptr[int_line_number])
-        return false;
 
     memcpy(line, line_ptr[int_line_number], strlen(line_ptr[int_line_number]));
 
     LC_LOG_INFO("requested line is: %s", line_ptr[int_line_number]);
 
     *line_number = int_line_number++;
+
+    if (!line_ptr[int_line_number])
+        eof = true;
 
     return true;
 }
@@ -70,6 +77,7 @@ protected:
         gcode_cbs.lc_interface_gcode_deinit = lc_interface_gcode_deinit;
         gcode_cbs.lc_interface_gcode_init = lc_interface_gcode_init;
         gcode_cbs.lc_interface_gcode_get_line = lc_interface_gcode_get_line;
+        gcode_cbs.lc_interface_gcode_get_end_of_file = lc_interface_gcode_get_enf_of_file;
 
         lc_gcode_init(&gcode_cbs);
     }
@@ -119,6 +127,6 @@ TEST_F(LCGcode, initial_t)
 {
     lc_gcode_set_parse_callback(ParsedGcodeCallback);
 
-    while (lc_gcode_process_line())
-        ;
+    while (!lc_interface_gcode_get_enf_of_file())
+        lc_gcode_process_line();
 }
