@@ -28,8 +28,11 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
     const char *line_ptr[] = {
         "G1 G5.12 G2.1 X5 Y10 Z7 T9 F1000 M123",
         "G2.1 G10.1 G100.0 X5000 Y12345 Z1.12345 T15 F500000 M100.100",
+        "F1000",
+        "M99",
+        "G82",
         ";G1 X10 Y10 ; this line should be ignored!",
-        "G1 F50 ; these values should be ignored: G200 F100",
+        "G1 F50 ; these values should be ignored => G200 F100",
         "G1 F50 Xa Y10 Z15 ; this line has syntax error in it, should cause parse error",
         NULL,
     };
@@ -90,10 +93,10 @@ protected:
     static void ParsedGcodeCallback(const lc_gcode_obj_t *parsed_gcode)
     {
         LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
-                     lc_gcode_command_type_to_chr(parsed_gcode->command_type),
-                     parsed_gcode->command_number,
-                     parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "");
-        
+                    lc_gcode_command_type_to_chr(parsed_gcode->command_type),
+                    parsed_gcode->command_number,
+                    parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "");
+
         lc_gcode_attrbute_value_t parsed_gcode_values = parsed_gcode->command_values;
 
         struct lc_gcode_parse_tag_map
@@ -118,7 +121,7 @@ protected:
         };
 
         for (uint8_t i = 0; parsed_gcode_tag_map[i].tag; i++)
-            if(parsed_gcode_tag_map[i].attr->existed)
+            if (parsed_gcode_tag_map[i].attr->existed)
                 LC_LOG_INFO("%c=%f", parsed_gcode_tag_map[i].tag, parsed_gcode_tag_map[i].attr->value);
     }
 };
@@ -128,7 +131,6 @@ TEST_F(LCGcode, initial_t)
     lc_gcode_set_parse_callback(ParsedGcodeCallback);
 
     while (!lc_interface_gcode_get_enf_of_file())
-        if(!lc_gcode_process_line())
+        if (!lc_gcode_process_line())
             LC_LOG_ERROR("GCODE module couldn't parse last line, need to take some action");
-
 }
