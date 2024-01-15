@@ -176,5 +176,7 @@ static bool lc_gcode_parse_line(char *line)
                 return false;
         }
     }
+
+    return true;
 }
 /*********************************************************/
