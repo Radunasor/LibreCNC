@@ -97,32 +97,26 @@ protected:
                     parsed_gcode->command_number,
                     parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "");
 
-        lc_gcode_attrbute_value_t parsed_gcode_values = parsed_gcode->command_values;
+        std::vector<std::pair<const char, lc_gcode_attr_t>> parsed_gcode_tag_map = {
+            {'X', parsed_gcode->command_values.X},
+            {'Y', parsed_gcode->command_values.Y},
+            {'Z', parsed_gcode->command_values.Z},
+            {'I', parsed_gcode->command_values.I},
+            {'J', parsed_gcode->command_values.J},
+            {'K', parsed_gcode->command_values.K},
+            {'L', parsed_gcode->command_values.L},
+            {'N', parsed_gcode->command_values.N},
+            {'P', parsed_gcode->command_values.P},
+            {'R', parsed_gcode->command_values.R},
+            {'S', parsed_gcode->command_values.S},
+            {'T', parsed_gcode->command_values.T},
+            };
 
-        struct lc_gcode_parse_tag_map
+        for (auto pair : parsed_gcode_tag_map)
         {
-            const char tag;
-            lc_gcode_attr_t *attr;
-        } parsed_gcode_tag_map[] = {
-            {'X', &parsed_gcode_values.X},
-            {'Y', &parsed_gcode_values.Y},
-            {'Z', &parsed_gcode_values.Z},
-            {'I', &parsed_gcode_values.I},
-            {'J', &parsed_gcode_values.J},
-            {'K', &parsed_gcode_values.K},
-            {'L', &parsed_gcode_values.L},
-            {'N', &parsed_gcode_values.N},
-            {'P', &parsed_gcode_values.P},
-            {'R', &parsed_gcode_values.R},
-            {'S', &parsed_gcode_values.S},
-            {'T', &parsed_gcode_values.T},
-
-            {'\0', NULL},
-        };
-
-        for (uint8_t i = 0; parsed_gcode_tag_map[i].tag; i++)
-            if (parsed_gcode_tag_map[i].attr->existed)
-                LC_LOG_INFO("%c=%f", parsed_gcode_tag_map[i].tag, parsed_gcode_tag_map[i].attr->value);
+            if (pair.second.existed)
+                LC_LOG_INFO("%c=%f", pair.first, pair.second.value);
+        }
     }
 };
 
