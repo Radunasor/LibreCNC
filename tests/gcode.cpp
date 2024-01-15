@@ -125,6 +125,9 @@ TEST_F(LCGcode, initial_t)
     lc_gcode_set_parse_callback(ParsedGcodeCallback);
 
     while (!lc_interface_gcode_get_enf_of_file())
+    {
+        LC_LOG_INFO("********************************************************************");
         if (!lc_gcode_process_line())
             LC_LOG_ERROR("GCODE module couldn't parse last line, need to take some action");
+    }
 }
