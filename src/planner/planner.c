@@ -42,7 +42,6 @@ bool lc_planner_get_initialized()
 
 void lc_planner_plan()
 {
-
 }
 
 /*********************************************************/
@@ -50,6 +49,21 @@ void lc_planner_plan()
 /*********************************************************/
 static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
 {
-    lc_planner_rb_insert(rb, parsed_gcode);
+    switch (parsed_gcode->command_type)
+    {
+    case LC_GCODE_TYPE_G:
+    {
+        lc_stepper_t *steps = NULL;
+        // todo: ask motion control module to calculate steps and dir bit
+        lc_planner_rb_insert(rb, steps);
+    }
+    break;
+    case LC_GCODE_TYPE_M:
+        break;
+    case LC_GCODE_TYPE_F:
+        break;
+    default:
+        break;
+    }
 }
 /*********************************************************/
