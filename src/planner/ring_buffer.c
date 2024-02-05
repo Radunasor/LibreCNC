@@ -36,14 +36,14 @@ void lc_planner_rb_destroy(lc_planner_rb_t *rb)
     lc_free(rb);
 }
 
-bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_stepper_t *parsed_gcode)
+bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_stepper_t *steps)
 {
-    LC_ASSERT(&parsed_gcode, "data pointer is NULL"); // Check if data is NULL
+    LC_ASSERT(&steps, "data pointer is NULL"); // Check if data is NULL
 
     if (rb->count == rb->size) // Check if the buffer is full
         return false;          // Return an error value
 
-    rb->buffer[rb->head] = *parsed_gcode;
+    rb->buffer[rb->head] = *steps;
 
     rb->head = (rb->head + 1) % rb->size;
     rb->count++; // Increment count
@@ -51,12 +51,12 @@ bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_stepper_t *parsed_gcode)
     return true;
 }
 
-bool lc_planner_rb_remove(lc_planner_rb_t *rb, lc_stepper_t *parsed_gcode)
+bool lc_planner_rb_remove(lc_planner_rb_t *rb, lc_stepper_t *steps)
 {
     if (rb->count == 0)
         return false; // Return an error value
 
-    *parsed_gcode = rb->buffer[rb->tail];
+    *steps = rb->buffer[rb->tail];
 
     rb->tail = (rb->tail + 1) % rb->size;
     rb->count--; // Decrement count
