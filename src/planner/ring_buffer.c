@@ -6,7 +6,7 @@
 
 struct lc_planner_rb_st
 {
-    lc_gcode_obj_t buffer[LC_PLANNER_GCODE_RB_BUFFER_SIZE];
+    lc_stepper_t buffer[LC_PLANNER_GCODE_RB_BUFFER_SIZE];
     size_t head;
     size_t tail;
     size_t size;
@@ -19,7 +19,7 @@ lc_planner_rb_t *lc_planner_rb_create(size_t size)
 
     LC_ASSERT(rb, "ring buffer memory allocation failed!");
 
-    memset(rb->buffer, 0, LC_PLANNER_GCODE_RB_BUFFER_SIZE * sizeof(lc_gcode_obj_t));
+    memset(rb->buffer, 0, LC_PLANNER_GCODE_RB_BUFFER_SIZE * sizeof(lc_stepper_t));
 
     rb->head = 0;
     rb->tail = 0;
@@ -36,7 +36,7 @@ void lc_planner_rb_destroy(lc_planner_rb_t *rb)
     lc_free(rb);
 }
 
-bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_gcode_obj_t *parsed_gcode)
+bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_stepper_t *parsed_gcode)
 {
     LC_ASSERT(&parsed_gcode, "data pointer is NULL"); // Check if data is NULL
 
@@ -51,7 +51,7 @@ bool lc_planner_rb_insert(lc_planner_rb_t *rb, const lc_gcode_obj_t *parsed_gcod
     return true;
 }
 
-bool lc_planner_rb_remove(lc_planner_rb_t *rb, lc_gcode_obj_t *parsed_gcode)
+bool lc_planner_rb_remove(lc_planner_rb_t *rb, lc_stepper_t *parsed_gcode)
 {
     if (rb->count == 0)
         return false; // Return an error value
