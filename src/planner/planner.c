@@ -87,6 +87,16 @@ static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
 
 static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode)
 {
+        lc_stepper_t *steps = NULL;
 
+        switch (parsed_gcode->command_number)
+        {
+        case 0: //M0
+        case 1: //M1
+            // todo: take care of M codes!
+            break;
+        default:
+            break;
+        }
 }
 /*********************************************************/
