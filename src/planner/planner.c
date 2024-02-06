@@ -87,6 +87,14 @@ static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
 
 static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode)
 {
-
+    switch (parsed_gcode->command_number)
+    {
+    case 0: //M0
+    case 1: //M1
+        // todo: change the required machine configs
+        break;
+    default:
+        break;
+    }
 }
 /*********************************************************/
