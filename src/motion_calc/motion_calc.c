@@ -1,3 +1,6 @@
+
+#if 0
+
 #include <math.h>
 
 float resolution = 0.00625;
@@ -660,3 +663,5 @@ void dot(float xdot, float ydot)
 //////binary to decimal/////////
 
 /////////////////////////
+
+#endif
