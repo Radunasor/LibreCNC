@@ -48,9 +48,9 @@ void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
 
 void lc_planner_plan()
 {
-    if(lc_planner_rb_get_elemets_count(rb) > 0)
+    if (lc_planner_rb_get_elemets_count(rb) > 0)
     {
-        lc_gcode_obj_t *gcode_obj;
+        lc_gcode_obj_t *gcode_obj = NULL;
         lc_planner_rb_remove(rb, gcode_obj);
 
         lc_planner_handle_gcode(gcode_obj);
@@ -58,7 +58,7 @@ void lc_planner_plan()
         return;
     }
 
-    while(!lc_planner_rb_is_full(rb)/* || !get_end_of_file()*/) // todo: add the end of file interface
+    while (!lc_planner_rb_is_full(rb) /* || !get_end_of_file()*/) // todo: add the end of file interface
     {
         char line[8] = {0};
         size_t line_num = 0;
@@ -72,11 +72,14 @@ void lc_planner_plan()
 /*********************************************************/
 static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode)
 {
+    if (!parsed_gcode)
+        return;
+
     switch (parsed_gcode->command_type)
     {
     case LC_GCODE_TYPE_G:
         lc_planner_on_G_command(parsed_gcode);
-    break;
+        break;
     case LC_GCODE_TYPE_M:
         lc_planner_on_M_command(parsed_gcode);
         break;
@@ -90,28 +93,28 @@ static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode)
 
 static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
 {
-        switch (parsed_gcode->command_number)
-        {
-        case 0: //G0
-        case 1: //G1
-            // todo: ask motion control module to calculate steps and dir bit
-            // todo: take care of M codes!
-            break;
-        default:
-            break;
-        }
+    switch (parsed_gcode->command_number)
+    {
+    case 0: // G0
+    case 1: // G1
+        // todo: ask motion control module to calculate steps and dir bit
+        // todo: take care of M codes!
+        break;
+    default:
+        break;
+    }
 }
 
 static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode)
 {
-        switch (parsed_gcode->command_number)
-        {
-        case 0: //M0
-        case 1: //M1
-            // todo: take care of M codes!
-            break;
-        default:
-            break;
-        }
+    switch (parsed_gcode->command_number)
+    {
+    case 0: // M0
+    case 1: // M1
+        // todo: take care of M codes!
+        break;
+    default:
+        break;
+    }
 }
 /*********************************************************/
