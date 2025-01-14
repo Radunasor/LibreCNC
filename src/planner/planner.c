@@ -9,9 +9,9 @@ static bool initialized = false;
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode);
 static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode);
 static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode);
+static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode);
 /******************************************************/
 
 void lc_planner_init()
@@ -20,8 +20,7 @@ void lc_planner_init()
         return;
 
     rb = lc_planner_rb_create(LC_PLANNER_OBJ_RING_BUFFER_SIZE);
-
-    lc_gcode_set_parse_callback(lc_planner_gcode_parser_callback);
+    lc_gcode_set_parse_cb(lc_planner_gcode_parser_callback);
 
     initialized = true;
 }
@@ -42,17 +41,37 @@ bool lc_planner_get_initialized()
     return initialized;
 }
 
+void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
+{
+    // todo: need to handle the ring buffer
+}
+
 void lc_planner_plan()
 {
+    if(lc_planner_rb_get_elemets_count(rb) > 0)
+    {
+        lc_gcode_obj_t *gcode_obj;
+        lc_planner_rb_remove(rb, gcode_obj);
+
+        lc_planner_handle_gcode(gcode_obj);
+
+        return;
+    }
+
+    while(!lc_planner_rb_is_full(rb)/* || !get_end_of_file()*/) // todo: add the end of file interface
+    {
+        char line[8] = {0};
+        size_t line_num = 0;
+        // todo: get the line/line line from gcode stream
+        lc_gcode_process_line(line, line_num);
+    }
 }
 
 /*********************************************************/
 /***********static functions implementations**************/
 /*********************************************************/
-static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
+static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode)
 {
-    static lc_stepper_t steps;
-
     switch (parsed_gcode->command_type)
     {
     case LC_GCODE_TYPE_G:
@@ -71,14 +90,12 @@ static void lc_planner_gcode_parser_callback(const lc_gcode_obj_t *parsed_gcode)
 
 static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
 {
-        lc_stepper_t *steps = NULL;
-
         switch (parsed_gcode->command_number)
         {
         case 0: //G0
         case 1: //G1
             // todo: ask motion control module to calculate steps and dir bit
-            lc_planner_rb_insert(rb, steps);
+            // todo: take care of M codes!
             break;
         default:
             break;
@@ -87,8 +104,6 @@ static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
 
 static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode)
 {
-        lc_stepper_t *steps = NULL;
-
         switch (parsed_gcode->command_number)
         {
         case 0: //M0

@@ -76,13 +76,7 @@ class LCGcode : public ::testing::Test
 protected:
     void SetUp() override
     {
-        static lc_interface_gcode_t gcode_cbs;
-        gcode_cbs.lc_interface_gcode_deinit = lc_interface_gcode_deinit;
-        gcode_cbs.lc_interface_gcode_init = lc_interface_gcode_init;
-        gcode_cbs.lc_interface_gcode_get_line = lc_interface_gcode_get_line;
-        gcode_cbs.lc_interface_gcode_get_end_of_file = lc_interface_gcode_get_enf_of_file;
-
-        lc_gcode_init(&gcode_cbs);
+        lc_gcode_init();
     }
 
     void TearDown() override
@@ -122,12 +116,15 @@ protected:
 
 TEST_F(LCGcode, initial_t)
 {
-    lc_gcode_set_parse_callback(ParsedGcodeCallback);
+    lc_gcode_set_parse_cb(ParsedGcodeCallback);
 
     while (!lc_interface_gcode_get_enf_of_file())
     {
+        char line[LC_GCODE_MAX_LINE_LENTGH] = {0};
+        size_t line_num = 0;
+        lc_interface_gcode_get_line(line, &line_num);
         LC_LOG_INFO("********************************************************************");
-        if (!lc_gcode_process_line())
+        if (!lc_gcode_process_line((const char *)line, line_num))
             LC_LOG_ERROR("GCODE module couldn't parse last line, need to take some action");
     }
 }

@@ -6,6 +6,7 @@
 #define CHECK_INITIALIIZED LC_ASSERT(initialized, "GCODE module not initialized!");
 
 static bool initialized = false;
+static lc_gcode_parse_cb_t parse_cb = NULL;
 
 static lc_gcode_obj_t gcode_obj = {
     .command_number = 0,
@@ -14,15 +15,6 @@ static lc_gcode_obj_t gcode_obj = {
     .subcommand_existed = false,
     .sub_command_number = 0,
 };
-
-static lc_interface_gcode_t gcode_user_callbacks = {
-    .lc_interface_gcode_deinit = NULL,
-    .lc_interface_gcode_init = NULL,
-    .lc_interface_gcode_get_line = NULL,
-    .lc_interface_gcode_get_end_of_file = NULL,
-};
-
-static lc_gcode_cb_t gcode_parser_callback = NULL;
 
 static lc_gcode_attrbute_value_t line_gcode_attributes =
     {
@@ -43,25 +35,13 @@ static lc_gcode_attrbute_value_t line_gcode_attributes =
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static bool lc_gcode_parse_line(char *line);
+static bool lc_gcode_parse_line(char *line, size_t line_num);
 /******************************************************/
 
-void lc_gcode_init(lc_interface_gcode_t *gcode_cbs)
+void lc_gcode_init()
 {
     if (initialized)
         return;
-
-    if (!gcode_cbs                                ||
-        !gcode_cbs->lc_interface_gcode_deinit     ||
-        !gcode_cbs->lc_interface_gcode_init       ||
-        !gcode_cbs->lc_interface_gcode_get_line   ||
-        !gcode_cbs->lc_interface_gcode_get_end_of_file)
-    {
-        LC_LOG_ERROR("gcode module initialized with NULL or partially developed interface pointer");
-        return;
-    }
-
-    gcode_user_callbacks = *gcode_cbs;
 
     initialized = true;
 }
@@ -72,7 +52,7 @@ void lc_gcode_deinit()
         return;
 
     memset(&line_gcode_attributes, 0, sizeof(lc_gcode_attrbute_value_t));
-    memset(&gcode_user_callbacks, 0, sizeof(lc_interface_gcode_t));
+    parse_cb = NULL;
     initialized = false;
 }
 
@@ -81,44 +61,32 @@ bool lc_gcode_get_initialized()
     return initialized;
 }
 
-void lc_gcode_set_parse_callback(lc_gcode_cb_t parse_cb)
+void lc_gcode_set_parse_cb(lc_gcode_parse_cb_t parse_callback)
 {
-    gcode_parser_callback = parse_cb;
+    if (!parse_callback)
+        return;
+
+    parse_cb = parse_callback;
 }
 
-bool lc_gcode_process_get_end_of_file()
+bool lc_gcode_process_line(const char *line, size_t line_num)
 {
     CHECK_INITIALIIZED
 
-    return gcode_user_callbacks.lc_interface_gcode_get_end_of_file();
-}
-
-bool lc_gcode_process_line()
-{
-    CHECK_INITIALIIZED
-
-    if (!gcode_parser_callback)
-    {
-        LC_LOG_ERROR("no callback set for parsed gcodes");
-        return false;
-    }
-
-    char line[256] = {0};
-    size_t line_num = 0;
-
-    if(gcode_user_callbacks.lc_interface_gcode_get_end_of_file())
+    if (!line)
         return false;
 
-    if (!gcode_user_callbacks.lc_interface_gcode_get_line(line, &line_num))
-        return false;
+    char clipped_line[LC_GCODE_MAX_LINE_LENTGH] = {0};
+    memcpy(clipped_line, line, LC_GCODE_MAX_LINE_LENTGH);
+    clipped_line[LC_GCODE_MAX_LINE_LENTGH - 1] = '\0';
 
-    return lc_gcode_parse_line(line);
+    return lc_gcode_parse_line(clipped_line, line_num);
 }
 
 /*********************************************************/
 /***********static functions implementations**************/
 /*********************************************************/
-static bool lc_gcode_parse_line(char *line)
+static bool lc_gcode_parse_line(char *line, size_t line_num)
 {
     lc_gcode_parser_mark_comments(line);
 
@@ -145,7 +113,10 @@ static bool lc_gcode_parse_line(char *line)
 
     for (uint8_t i = 0; lc_gcode_parser_tag_map[i].tag; i++)
         if (!lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->existed), &(lc_gcode_parser_tag_map[i].attr->value)))
+        {
+            LC_LOG_ERROR("ERROR on GCODE Line %d", line_num);
             return false;
+        }
 
     lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
         LC_GCODE_TYPE_F,
@@ -162,7 +133,7 @@ static bool lc_gcode_parse_line(char *line)
         bool command_existed = false;
         command_ptr = line;
 
-        if(!lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_type_arr[i], &command_existed, &gcode_obj.command_number, &gcode_obj.subcommand_existed, &gcode_obj.sub_command_number))
+        if (!lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_type_arr[i], &command_existed, &gcode_obj.command_number, &gcode_obj.subcommand_existed, &gcode_obj.sub_command_number))
             return false;
 
         while (command_existed)
@@ -170,9 +141,12 @@ static bool lc_gcode_parse_line(char *line)
             gcode_obj.command_type = lc_gcode_command_type_arr[i];
             gcode_obj.command_values = line_gcode_attributes;
 
-            gcode_parser_callback(&gcode_obj);
+            if (parse_cb)
+                parse_cb(&gcode_obj);
+            else
+                LC_LOG_WARN("GCODE parsing callback has to be set to get the parsed result from the module");
 
-            if(!lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_type_arr[i], &command_existed, &gcode_obj.command_number, &gcode_obj.subcommand_existed, &gcode_obj.sub_command_number))
+            if (!lc_gcode_parser_get_command(&command_ptr, lc_gcode_command_type_arr[i], &command_existed, &gcode_obj.command_number, &gcode_obj.subcommand_existed, &gcode_obj.sub_command_number))
                 return false;
         }
     }
