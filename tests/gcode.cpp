@@ -41,7 +41,7 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
 
     LC_LOG_INFO("requested line is: %s", line_ptr[int_line_number]);
 
-    *line_number = int_line_number++;
+    *line_number = ++int_line_number;
 
     if (!line_ptr[int_line_number])
         eof = true;
