@@ -12,6 +12,7 @@ void lc_init()
 
     lc_config_init();
     lc_config_load_default_configs();
+    lc_planner_init();
 
     initialized = true;
 }
@@ -26,6 +27,7 @@ void lc_deinit()
     if (!initialized)
         return;
 
+    lc_planner_deinit();
     lc_config_deinit();
 
     initialized = false;
