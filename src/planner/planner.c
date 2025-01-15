@@ -2,6 +2,8 @@
 
 #include "planner.h"
 #include "ring_buffer.h"
+#include "g_commands.h"
+#include "m_commands.h"
 
 static lc_planner_rb_t *rb;
 static bool initialized = false;
@@ -9,8 +11,6 @@ static bool initialized = false;
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode);
-static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode);
 static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode);
 /******************************************************/
 
@@ -85,33 +85,6 @@ static void lc_planner_handle_gcode(const lc_gcode_obj_t *parsed_gcode)
         break;
     case LC_GCODE_TYPE_F:
         // todo: change the feedrate
-        break;
-    default:
-        break;
-    }
-}
-
-static void lc_planner_on_G_command(const lc_gcode_obj_t *parsed_gcode)
-{
-    switch (parsed_gcode->command_number)
-    {
-    case 0: // G0
-    case 1: // G1
-        // todo: ask motion control module to calculate steps and dir bit
-        // todo: take care of M codes!
-        break;
-    default:
-        break;
-    }
-}
-
-static void lc_planner_on_M_command(const lc_gcode_obj_t *parsed_gcode)
-{
-    switch (parsed_gcode->command_number)
-    {
-    case 0: // M0
-    case 1: // M1
-        // todo: take care of M codes!
         break;
     default:
         break;
