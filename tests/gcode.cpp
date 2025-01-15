@@ -39,8 +39,6 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
 
     memcpy(line, line_ptr[int_line_number], strlen(line_ptr[int_line_number]));
 
-    LC_LOG_INFO("requested line is: %s", line_ptr[int_line_number]);
-
     *line_number = ++int_line_number;
 
     if (!line_ptr[int_line_number])
@@ -124,6 +122,7 @@ TEST_F(LCGcode, initial_t)
         size_t line_num = 0;
         lc_interface_gcode_get_line(line, &line_num);
         LC_LOG_INFO("********************************************************************");
+        LC_LOG_INFO("<<requested line is: %s>>", line);
         if (!lc_gcode_process_line((const char *)line, line_num))
             LC_LOG_ERROR("GCODE module couldn't parse last line, need to take some action");
     }
