@@ -45,6 +45,8 @@ typedef enum
         }                                                                                                                     \
     } while (0)
 
+#define CHECK_INITIALIIZED LC_ASSERT(initialized, "GCODE module not initialized!");
+
 #define LC_DEBUG_BUILD
 
 #endif
