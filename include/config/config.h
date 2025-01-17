@@ -22,6 +22,11 @@ void lc_config_init();
 void lc_config_deinit();
 
 /**
+ * @brief check for the initialization status.
+ */
+bool lc_config_get_initialized();
+
+/**
  * @brief Loads default configurations into the configuration module.
  */
 void lc_config_load_default_configs();
