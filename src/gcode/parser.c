@@ -8,8 +8,7 @@
 /******************************************************/
 /***********static functions declarations**************/
 /******************************************************/
-static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, bool *existed, float *value);
-static const char lc_gcode_parser_get_tag_char_from_cmd_type(lc_gcode_command_type_t command_type);
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const lc_gcode_command_type_t type, bool *existed, float *value);
 /******************************************************/
 void lc_gcode_parser_mark_comments(char *line)
 {
@@ -44,14 +43,13 @@ bool lc_gcode_parser_get_command(const char **line,
     if (line == NULL)
         return false;
 
-    const char tag = lc_gcode_parser_get_tag_char_from_cmd_type(command_type);
-    if(!tag)
+    if(!command_type)
         return false;
 
     float command_val = 0.0f;
     *sub_command_existed = false;
 
-    char *end_ptr = lc_gcode_parser_get_tag_val(*line, tag, command_existed, &command_val);
+    char *end_ptr = lc_gcode_parser_get_tag_val(*line, command_type, command_existed, &command_val);
 
     if(*command_existed && !end_ptr)
         return false;
@@ -69,12 +67,12 @@ bool lc_gcode_parser_get_command(const char **line,
 /*********************************************************/
 /***********static functions implementations**************/
 /*********************************************************/
-static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag, bool *existed, float *value)
+static inline char *lc_gcode_parser_get_tag_val(const char *line, const lc_gcode_command_type_t type, bool *existed, float *value)
 {
     *existed = false;
     *value = 0;
 
-    const char *char_ptr = strchr(line, tag);
+    const char *char_ptr = strchr(line, type);
 
     if (!char_ptr)
         return NULL;
@@ -96,25 +94,4 @@ static inline char *lc_gcode_parser_get_tag_val(const char *line, const char tag
     return end_ptr;
 }
 
-static const char lc_gcode_parser_get_tag_char_from_cmd_type(lc_gcode_command_type_t command_type)
-{
-    char tag = 0;
-
-    switch (command_type)
-    {
-    case LC_GCODE_TYPE_F:
-        tag = 'F';
-        break;
-    case LC_GCODE_TYPE_M:
-        tag = 'M';
-        break;
-    case LC_GCODE_TYPE_G:
-        tag = 'G';
-        break;
-    default:
-        break;
-    }
-
-    return tag;
-}
 /*********************************************************/
