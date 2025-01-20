@@ -20,7 +20,6 @@ void lc_planner_init()
         return;
 
     rb = lc_planner_rb_create(LC_PLANNER_OBJ_RING_BUFFER_SIZE);
-    lc_gcode_set_parse_cb(lc_planner_gcode_parser_callback);
 
     initialized = true;
 }
