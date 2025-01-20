@@ -47,28 +47,6 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
     return true;
 }
 
-static const char lc_gcode_command_type_to_chr(lc_gcode_command_type_t command_type)
-{
-    char tag = 0;
-
-    switch (command_type)
-    {
-    case LC_GCODE_TYPE_F:
-        tag = 'F';
-        break;
-    case LC_GCODE_TYPE_M:
-        tag = 'M';
-        break;
-    case LC_GCODE_TYPE_G:
-        tag = 'G';
-        break;
-    default:
-        break;
-    }
-
-    return tag;
-}
-
 class LCGcode : public ::testing::Test
 {
 protected:
@@ -82,26 +60,48 @@ protected:
         lc_gcode_deinit();
     }
 
-    static void ParsedGcodeCallback(const lc_gcode_obj_t *parsed_gcode)
+    static void gCommandHandlerCallback(const lc_gcode_obj_t *parsed_gcode)
     {
         LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
-                    lc_gcode_command_type_to_chr(parsed_gcode->command_type),
-                    parsed_gcode->command_number,
-                    parsed_gcode->subcommand_existed ? (" and subcommand " + std::to_string(parsed_gcode->sub_command_number)).c_str() : "");
+                    lc_gcode_get_command_type(parsed_gcode),
+                    lc_gcode_get_command_number(parsed_gcode),
+                    lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
 
-        std::vector<std::pair<const char, lc_gcode_attr_t>> parsed_gcode_tag_map = {
-            {'X', parsed_gcode->command_values.X},
-            {'Y', parsed_gcode->command_values.Y},
-            {'Z', parsed_gcode->command_values.Z},
-            {'I', parsed_gcode->command_values.I},
-            {'J', parsed_gcode->command_values.J},
-            {'K', parsed_gcode->command_values.K},
-            {'L', parsed_gcode->command_values.L},
-            {'N', parsed_gcode->command_values.N},
-            {'P', parsed_gcode->command_values.P},
-            {'R', parsed_gcode->command_values.R},
-            {'S', parsed_gcode->command_values.S},
-            {'T', parsed_gcode->command_values.T},
+        std::vector<std::pair<const char, lc_gcode_g_command_attr_t>> parsed_gcode_tag_map = {
+            {'X', ((lc_gcode_g_command_t *)parsed_gcode)->X},
+            {'Y', ((lc_gcode_g_command_t *)parsed_gcode)->Y},
+            {'Z', ((lc_gcode_g_command_t *)parsed_gcode)->Z},
+            {'I', ((lc_gcode_g_command_t *)parsed_gcode)->I},
+            {'J', ((lc_gcode_g_command_t *)parsed_gcode)->J},
+            {'K', ((lc_gcode_g_command_t *)parsed_gcode)->K},
+            {'L', ((lc_gcode_g_command_t *)parsed_gcode)->L},
+            {'N', ((lc_gcode_g_command_t *)parsed_gcode)->N},
+            {'P', ((lc_gcode_g_command_t *)parsed_gcode)->P},
+            {'R', ((lc_gcode_g_command_t *)parsed_gcode)->R},
+            {'S', ((lc_gcode_g_command_t *)parsed_gcode)->S},
+            {'T', ((lc_gcode_g_command_t *)parsed_gcode)->T},
+            };
+
+        for (auto pair : parsed_gcode_tag_map)
+        {
+            if (pair.second.existed)
+                LC_LOG_INFO("%c=%f", pair.first, pair.second.value);
+        }
+    }
+
+    static void mCommandHandlerCallback(const lc_gcode_obj_t *parsed_gcode)
+    {
+        LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
+                    lc_gcode_get_command_type(parsed_gcode),
+                    lc_gcode_get_command_number(parsed_gcode),
+                    lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
+
+        std::vector<std::pair<const char, lc_gcode_m_command_attr_t>> parsed_gcode_tag_map = {
+            {'R', ((lc_gcode_m_command_t *)parsed_gcode)->R},
+            {'Q', ((lc_gcode_m_command_t *)parsed_gcode)->Q},
+            {'P', ((lc_gcode_m_command_t *)parsed_gcode)->P},
+            {'E', ((lc_gcode_m_command_t *)parsed_gcode)->E},
+            {'L', ((lc_gcode_m_command_t *)parsed_gcode)->L}
             };
 
         for (auto pair : parsed_gcode_tag_map)
@@ -114,7 +114,8 @@ protected:
 
 TEST_F(LCGcode, initial_t)
 {
-    lc_gcode_set_parse_cb(ParsedGcodeCallback);
+    lc_gcode_g_command_set_handler_callback(gCommandHandlerCallback);
+    lc_gcode_m_command_set_handler_callback(mCommandHandlerCallback);
 
     while (!lc_interface_gcode_get_enf_of_file())
     {
