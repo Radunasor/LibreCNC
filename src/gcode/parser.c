@@ -79,7 +79,7 @@ static inline char *lc_gcode_parser_get_tag_val(const char *line, const lc_gcode
 
     *existed = true;
 
-    if (!isdigit(*(char_ptr + 1)))
+    if (!isdigit(*(char_ptr + 1)) && *(char_ptr + 1) != '-')
     {
         LC_LOG_ERROR("wrong Gcode format at %s. unable to parse : <%s>", line, char_ptr);
         return NULL;
