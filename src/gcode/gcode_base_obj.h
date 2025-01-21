@@ -8,7 +8,9 @@
 typedef enum lc_gcode_command_type_st
 {
     LC_GCODE_TYPE_NONE = 0,
+#ifdef LC_SUPPORT_O_COMMANDS    
     LC_GCODE_TYPE_O = 'O',
+#endif    
     LC_GCODE_TYPE_G = 'G',
     LC_GCODE_TYPE_M = 'M',
     LC_GCODE_TYPE_F = 'F',

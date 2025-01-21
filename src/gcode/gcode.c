@@ -64,7 +64,9 @@ static bool lc_gcode_parse_line(char *line, size_t line_num)
     lc_gcode_parser_mark_comments(line);
 
     lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
+#ifdef LC_SUPPORT_O_COMMANDS
         LC_GCODE_TYPE_O,
+#endif
         LC_GCODE_TYPE_F,
         LC_GCODE_TYPE_M,
         LC_GCODE_TYPE_G,
@@ -91,14 +93,14 @@ static bool lc_gcode_parse_line(char *line, size_t line_num)
             {
                 lc_gcode_g_command_t g_command;
                 g_command.command = parsed_command;
-                lc_gcode_g_command_extract_values(&g_command.command, line);
+                lc_gcode_g_command_extract_values(&g_command, line);
                 break;
             }
             case LC_GCODE_TYPE_M:
             {
                 lc_gcode_m_command_t m_command;
                 m_command.command = parsed_command;
-                lc_gcode_m_command_extract_attributes(&m_command.command, line);
+                lc_gcode_m_command_handle_attributes(&m_command, line);
                 break;
             }
             default:
