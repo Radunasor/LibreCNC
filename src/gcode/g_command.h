@@ -6,13 +6,6 @@
 #include "utils.h"
 
 typedef struct lc_gcode_g_command_st lc_gcode_g_command_t;
-typedef void (*lc_gcode_g_command_hanler_cb_t)(const lc_gcode_obj_t *);
-
-typedef struct lc_gcode_g_command_attr_st
-{
-    bool existed;
-    float value;
-} lc_gcode_g_command_attr_t;
 
 #define LC_GCODE_G_COMMAND_SUPPORTED_FIELDS \
     LC_GCODE_G_COMMAND_FIELD(X) \
@@ -31,7 +24,7 @@ typedef struct lc_gcode_g_command_attr_st
 struct lc_gcode_g_command_st
 {
     lc_gcode_obj_t command;
-    #define LC_GCODE_G_COMMAND_FIELD(attr) lc_gcode_g_command_attr_t attr;
+    #define LC_GCODE_G_COMMAND_FIELD(attr) lc_gcode_command_attr_t attr;
     LC_GCODE_G_COMMAND_SUPPORTED_FIELDS
     #undef LC_GCODE_G_COMMAND_FIELD
 };
@@ -42,6 +35,5 @@ LC_GCODE_G_COMMAND_SUPPORTED_FIELDS
 #undef LC_GCODE_G_COMMAND_FIELD
 
 bool lc_gcode_g_command_extract_values(lc_gcode_g_command_t *g_command, const char *line);
-void lc_gcode_g_command_set_handler_callback(lc_gcode_g_command_hanler_cb_t callback);
 
 #endif

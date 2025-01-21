@@ -4,14 +4,12 @@
 #include "parser.h"
 #include "logger/logger.h"
 
-static lc_gcode_g_command_hanler_cb_t handler_cb = NULL;
-
 bool lc_gcode_g_command_extract_values(lc_gcode_g_command_t *g_command, const char *line)
 {
     struct lc_gcode_parse_tag_map
     {
         const char tag;
-        lc_gcode_g_command_attr_t *attr;
+        lc_gcode_command_attr_t *attr;
     } lc_gcode_parser_tag_map[] = {
         #define LC_GCODE_G_COMMAND_FIELD(attr) {#attr[0],  &g_command->attr},
         LC_GCODE_G_COMMAND_SUPPORTED_FIELDS 
@@ -24,15 +22,5 @@ bool lc_gcode_g_command_extract_values(lc_gcode_g_command_t *g_command, const ch
         if (!lc_gcode_parser_get_value(line, lc_gcode_parser_tag_map[i].tag, &(lc_gcode_parser_tag_map[i].attr->existed), &(lc_gcode_parser_tag_map[i].attr->value)))
             return false;
 
-    if(handler_cb)
-        handler_cb(&g_command->command);
-    else
-        LC_LOG_WARN("GCODE G COMMAND CALLBACK HANDLER HAS NOT SET!");
-
     return true;
-}
-
-void lc_gcode_g_command_set_handler_callback(lc_gcode_g_command_hanler_cb_t callback)
-{
-    handler_cb = callback;
 }
