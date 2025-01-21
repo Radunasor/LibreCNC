@@ -41,7 +41,7 @@ struct lc_gcode_g_command_st
 LC_GCODE_G_COMMAND_SUPPORTED_FIELDS
 #undef LC_GCODE_G_COMMAND_FIELD
 
-bool lc_gcode_g_command_extract_values(lc_gcode_obj_t *command, const char *line);
+bool lc_gcode_g_command_extract_values(lc_gcode_g_command_t *g_command, const char *line);
 void lc_gcode_g_command_set_handler_callback(lc_gcode_g_command_hanler_cb_t callback);
 
 #endif

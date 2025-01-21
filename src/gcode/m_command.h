@@ -43,7 +43,7 @@ struct lc_gcode_m_command_st
 LC_GCODE_M_COMMAND_SUPPORTED_FIELDS
 #undef LC_GCODE_M_COMMAND_FIELD
 
-bool lc_gcode_m_command_extract_attributes(lc_gcode_obj_t *command, const char *line);
+bool lc_gcode_m_command_handle_attributes(lc_gcode_m_command_t *m_command, const char *line);
 void lc_gcode_m_command_set_handler_callback(lc_gcode_m_command_hanler_cb_t callback);
 
 #endif

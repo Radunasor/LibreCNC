@@ -6,10 +6,8 @@
 
 static lc_gcode_m_command_hanler_cb_t handler_cb = NULL;
 
-bool lc_gcode_m_command_extract_attributes(lc_gcode_obj_t *command, const char *line)
+bool lc_gcode_m_command_handle_attributes(lc_gcode_m_command_t *m_command, const char *line)
 {
-    lc_gcode_m_command_t *m_command = (lc_gcode_m_command_t *)command;
-
     struct lc_gcode_parse_tag_map
     {
         const char tag;
@@ -27,7 +25,7 @@ bool lc_gcode_m_command_extract_attributes(lc_gcode_obj_t *command, const char *
             return false;
 
     if (handler_cb)
-        handler_cb(command);
+        handler_cb(&m_command->command);
     else
         LC_LOG_WARN("GCODE M COMMAND CALLBACK HANDLER HAS NOT SET!");
 
