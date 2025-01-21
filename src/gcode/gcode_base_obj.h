@@ -12,8 +12,6 @@ typedef enum lc_gcode_command_type_st
     LC_GCODE_TYPE_G = 'G',
     LC_GCODE_TYPE_M = 'M',
     LC_GCODE_TYPE_F = 'F',
-
-    LC_GCODE_TYPE_LAST = 255,
 } lc_gcode_command_type_t;
 
 typedef struct lc_gcode_obj_st
