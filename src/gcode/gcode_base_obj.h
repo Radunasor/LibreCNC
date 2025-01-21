@@ -24,4 +24,10 @@ typedef struct lc_gcode_obj_st
     uint16_t sub_command_number;
 }lc_gcode_obj_t;
 
+typedef struct lc_gcode_command_attr_st
+{
+    bool existed;
+    float value;
+} lc_gcode_command_attr_t;
+
 #endif
