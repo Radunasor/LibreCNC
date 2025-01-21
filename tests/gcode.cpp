@@ -62,13 +62,8 @@ protected:
         lc_gcode_deinit();
     }
 
-    static void gCommandHandlerCallback(const lc_gcode_obj_t *parsed_gcode)
+    static std::vector<std::pair<const char, lc_gcode_command_attr_t>> g_command_attr_map_create(const lc_gcode_obj_t *parsed_gcode)
     {
-        LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
-                    lc_gcode_get_command_type(parsed_gcode),
-                    lc_gcode_get_command_number(parsed_gcode),
-                    lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
-
         float X_value = 0;
         bool X_existed = lc_gcode_g_command_get_attr_X(parsed_gcode, &X_value);
 
@@ -105,35 +100,26 @@ protected:
         float T_value = 0;
         bool T_existed = lc_gcode_g_command_get_attr_T(parsed_gcode, &T_value);
 
-        std::vector<std::pair<const char, lc_gcode_g_command_attr_t>> parsed_gcode_tag_map = {
-            {'X', (lc_gcode_g_command_attr_t){X_existed, X_value}},
-            {'Y', (lc_gcode_g_command_attr_t){Y_existed, Y_value}},
-            {'Z', (lc_gcode_g_command_attr_t){Z_existed, Z_value}},
-            {'I', (lc_gcode_g_command_attr_t){I_existed, I_value}},
-            {'J', (lc_gcode_g_command_attr_t){J_existed, J_value}},
-            {'K', (lc_gcode_g_command_attr_t){K_existed, K_value}},
-            {'L', (lc_gcode_g_command_attr_t){L_existed, L_value}},
-            {'N', (lc_gcode_g_command_attr_t){N_existed, N_value}},
-            {'P', (lc_gcode_g_command_attr_t){P_existed, P_value}},
-            {'R', (lc_gcode_g_command_attr_t){R_existed, R_value}},
-            {'S', (lc_gcode_g_command_attr_t){S_existed, S_value}},
-            {'T', (lc_gcode_g_command_attr_t){T_existed, T_value}},
+        std::vector<std::pair<const char, lc_gcode_command_attr_t>> parsed_gcode_tag_map = {
+            {'X', (lc_gcode_command_attr_t){X_existed, X_value}},
+            {'Y', (lc_gcode_command_attr_t){Y_existed, Y_value}},
+            {'Z', (lc_gcode_command_attr_t){Z_existed, Z_value}},
+            {'I', (lc_gcode_command_attr_t){I_existed, I_value}},
+            {'J', (lc_gcode_command_attr_t){J_existed, J_value}},
+            {'K', (lc_gcode_command_attr_t){K_existed, K_value}},
+            {'L', (lc_gcode_command_attr_t){L_existed, L_value}},
+            {'N', (lc_gcode_command_attr_t){N_existed, N_value}},
+            {'P', (lc_gcode_command_attr_t){P_existed, P_value}},
+            {'R', (lc_gcode_command_attr_t){R_existed, R_value}},
+            {'S', (lc_gcode_command_attr_t){S_existed, S_value}},
+            {'T', (lc_gcode_command_attr_t){T_existed, T_value}},
         };
 
-        for (auto pair : parsed_gcode_tag_map)
-        {
-            if (pair.second.existed)
-                LC_LOG_INFO("%c=%f", pair.first, pair.second.value);
-        }
+        return parsed_gcode_tag_map;
     }
 
-    static void mCommandHandlerCallback(const lc_gcode_obj_t *parsed_gcode)
+    static std::vector<std::pair<const char, lc_gcode_command_attr_t>> m_command_attr_map_create(const lc_gcode_obj_t *parsed_gcode)
     {
-        LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
-                    lc_gcode_get_command_type(parsed_gcode),
-                    lc_gcode_get_command_number(parsed_gcode),
-                    lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
-
         float R_value = 0;
         bool R_existed = lc_gcode_m_command_get_attr_R(parsed_gcode, &R_value);
 
@@ -149,14 +135,43 @@ protected:
         float L_value = 0;
         bool L_existed = lc_gcode_m_command_get_attr_L(parsed_gcode, &L_value);
 
-        std::vector<std::pair<const char, lc_gcode_m_command_attr_t>> parsed_gcode_tag_map = {
-            {'R', (lc_gcode_m_command_attr_t){R_existed, R_value}},
-            {'Q', (lc_gcode_m_command_attr_t){Q_existed, Q_value}},
-            {'P', (lc_gcode_m_command_attr_t){P_existed, P_value}},
-            {'E', (lc_gcode_m_command_attr_t){E_existed, E_value}},
-            {'L', (lc_gcode_m_command_attr_t){L_existed, L_value}}};
+        std::vector<std::pair<const char, lc_gcode_command_attr_t>> parsed_gcode_tag_map = {
+            {'R', (lc_gcode_command_attr_t){R_existed, R_value}},
+            {'Q', (lc_gcode_command_attr_t){Q_existed, Q_value}},
+            {'P', (lc_gcode_command_attr_t){P_existed, P_value}},
+            {'E', (lc_gcode_command_attr_t){E_existed, E_value}},
+            {'L', (lc_gcode_command_attr_t){L_existed, L_value}}};
 
-        for (auto pair : parsed_gcode_tag_map)
+        return parsed_gcode_tag_map;
+    }
+
+    static void CommandHandlerCallback(const lc_gcode_obj_t *parsed_gcode)
+    {
+        LC_LOG_INFO("Gcode command %c parsed with Command %d%s",
+                    lc_gcode_get_command_type(parsed_gcode),
+                    lc_gcode_get_command_number(parsed_gcode),
+                    lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
+
+        std::vector<std::pair<const char, lc_gcode_command_attr_t>> parsed_code_attr_map;
+
+        switch (lc_gcode_get_command_type(parsed_gcode))
+        {
+        case LC_GCODE_TYPE_G:
+        {
+            parsed_code_attr_map = g_command_attr_map_create(parsed_gcode);
+            break;
+        }
+        case LC_GCODE_TYPE_M:
+        {
+            parsed_code_attr_map = m_command_attr_map_create(parsed_gcode);
+            break;
+        }
+
+        default:
+            break;
+        }
+
+        for (auto pair :parsed_code_attr_map)
         {
             if (pair.second.existed)
                 LC_LOG_INFO("%c=%f", pair.first, pair.second.value);
@@ -166,8 +181,7 @@ protected:
 
 TEST_F(LCGcode, initial_t)
 {
-    lc_gcode_g_command_set_handler_callback(gCommandHandlerCallback);
-    lc_gcode_m_command_set_handler_callback(mCommandHandlerCallback);
+    lc_gcode_set_handler_callback(CommandHandlerCallback);
 
     while (!lc_interface_gcode_get_enf_of_file())
     {
