@@ -64,16 +64,17 @@ static bool lc_gcode_parse_line(char *line, size_t line_num)
     lc_gcode_parser_mark_comments(line);
 
     lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
+        LC_GCODE_TYPE_O,
         LC_GCODE_TYPE_F,
         LC_GCODE_TYPE_M,
         LC_GCODE_TYPE_G,
 
-        LC_GCODE_TYPE_LAST,
+        LC_GCODE_TYPE_NONE,
     }; // order is important
 
     const char *command_ptr = line;
 
-    for (uint8_t i = 0; lc_gcode_command_type_arr[i] != LC_GCODE_TYPE_LAST; i++)
+    for (uint8_t i = 0; lc_gcode_command_type_arr[i] != LC_GCODE_TYPE_NONE; i++)
     {
         bool command_existed = false;
         command_ptr = line;
