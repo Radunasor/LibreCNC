@@ -15,11 +15,9 @@ bool lc_gcode_m_command_extract_attributes(lc_gcode_obj_t *command, const char *
         const char tag;
         lc_gcode_m_command_attr_t *attr;
     } lc_gcode_parser_tag_map[] = {
-        {'R', &m_command->R},
-        {'Q', &m_command->Q},
-        {'P', &m_command->P},
-        {'E', &m_command->E},
-        {'L', &m_command->L},
+        #define LC_GCODE_M_COMMAND_FIELD(attr) {#attr[0],  &m_command->attr},
+        LC_GCODE_M_COMMAND_SUPPORTED_FIELDS 
+        #undef LC_GCODE_M_COMMAND_FIELD
 
         {'\0', NULL},
     };

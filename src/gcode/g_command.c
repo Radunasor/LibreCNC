@@ -10,26 +10,15 @@ bool lc_gcode_g_command_extract_values(lc_gcode_obj_t *command, const char *line
 {
     lc_gcode_g_command_t *g_command = (lc_gcode_g_command_t *) command;
 
-    // memset(command + (sizeof(lc_gcode_obj_t)), 0, sizeof(lc_gcode_g_command_t) - sizeof(lc_gcode_obj_t));
-
     struct lc_gcode_parse_tag_map
     {
         const char tag;
         lc_gcode_g_command_attr_t *attr;
     } lc_gcode_parser_tag_map[] = {
-        {'X', &g_command->X},
-        {'Y', &g_command->Y},
-        {'Z', &g_command->Z},
-        {'I', &g_command->I},
-        {'J', &g_command->J},
-        {'K', &g_command->K},
-        {'L', &g_command->L},
-        {'N', &g_command->N},
-        {'P', &g_command->P},
-        {'R', &g_command->R},
-        {'S', &g_command->S},
-        {'T', &g_command->T},
-
+        #define LC_GCODE_G_COMMAND_FIELD(attr) {#attr[0],  &g_command->attr},
+        LC_GCODE_G_COMMAND_SUPPORTED_FIELDS 
+        #undef LC_GCODE_G_COMMAND_FIELD
+        
         {'\0', NULL},
     };
 
