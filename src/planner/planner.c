@@ -61,7 +61,7 @@ void lc_planner_plan()
     {
         char line[8] = {0};
         size_t line_num = 0;
-        // todo: get the line/line line from gcode stream
+        // todo: get the line/line_num from gcode stream
         lc_gcode_process_line(line, line_num);
     }
 }
