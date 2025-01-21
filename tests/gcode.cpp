@@ -29,8 +29,10 @@ bool lc_interface_gcode_get_line(char *line, size_t *line_number)
         "G1 G5.12 G2.1 X5 Y10 Z7 T9 F1000 M123",
         "G2.1 G10.1 G100.0 X5000 Y12345 Z1.12345 T15 F500000 M100.100",
         "F1000",
+        "M103 R15.1 Q40 P100000 E12 L13",
         "M99",
         "G82",
+        "G01 X-1.23 Y-2.10 Z-3.21 ; test negative numbers",
         ";G1 X10 Y10 ; this line should be ignored!",
         "G1 F50 ; these values should be ignored => G200 F100",
         "G1 F50 Xa Y10 Z15 ; this line has syntax error in it, should cause parse error",
@@ -67,20 +69,56 @@ protected:
                     lc_gcode_get_command_number(parsed_gcode),
                     lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
 
+        float X_value = 0;
+        bool X_existed = lc_gcode_g_command_get_attr_X(parsed_gcode, &X_value);
+
+        float Y_value = 0;
+        bool Y_existed = lc_gcode_g_command_get_attr_Y(parsed_gcode, &Y_value);
+
+        float Z_value = 0;
+        bool Z_existed = lc_gcode_g_command_get_attr_Z(parsed_gcode, &Z_value);
+
+        float I_value = 0;
+        bool I_existed = lc_gcode_g_command_get_attr_I(parsed_gcode, &I_value);
+
+        float J_value = 0;
+        bool J_existed = lc_gcode_g_command_get_attr_J(parsed_gcode, &J_value);
+
+        float K_value = 0;
+        bool K_existed = lc_gcode_g_command_get_attr_K(parsed_gcode, &K_value);
+
+        float L_value = 0;
+        bool L_existed = lc_gcode_g_command_get_attr_L(parsed_gcode, &L_value);
+
+        float N_value = 0;
+        bool N_existed = lc_gcode_g_command_get_attr_N(parsed_gcode, &N_value);
+
+        float P_value = 0;
+        bool P_existed = lc_gcode_g_command_get_attr_P(parsed_gcode, &P_value);
+
+        float R_value = 0;
+        bool R_existed = lc_gcode_g_command_get_attr_R(parsed_gcode, &R_value);
+
+        float S_value = 0;
+        bool S_existed = lc_gcode_g_command_get_attr_S(parsed_gcode, &S_value);
+
+        float T_value = 0;
+        bool T_existed = lc_gcode_g_command_get_attr_T(parsed_gcode, &T_value);
+
         std::vector<std::pair<const char, lc_gcode_g_command_attr_t>> parsed_gcode_tag_map = {
-            {'X', ((lc_gcode_g_command_t *)parsed_gcode)->X},
-            {'Y', ((lc_gcode_g_command_t *)parsed_gcode)->Y},
-            {'Z', ((lc_gcode_g_command_t *)parsed_gcode)->Z},
-            {'I', ((lc_gcode_g_command_t *)parsed_gcode)->I},
-            {'J', ((lc_gcode_g_command_t *)parsed_gcode)->J},
-            {'K', ((lc_gcode_g_command_t *)parsed_gcode)->K},
-            {'L', ((lc_gcode_g_command_t *)parsed_gcode)->L},
-            {'N', ((lc_gcode_g_command_t *)parsed_gcode)->N},
-            {'P', ((lc_gcode_g_command_t *)parsed_gcode)->P},
-            {'R', ((lc_gcode_g_command_t *)parsed_gcode)->R},
-            {'S', ((lc_gcode_g_command_t *)parsed_gcode)->S},
-            {'T', ((lc_gcode_g_command_t *)parsed_gcode)->T},
-            };
+            {'X', (lc_gcode_g_command_attr_t){X_existed, X_value}},
+            {'Y', (lc_gcode_g_command_attr_t){Y_existed, Y_value}},
+            {'Z', (lc_gcode_g_command_attr_t){Z_existed, Z_value}},
+            {'I', (lc_gcode_g_command_attr_t){I_existed, I_value}},
+            {'J', (lc_gcode_g_command_attr_t){J_existed, J_value}},
+            {'K', (lc_gcode_g_command_attr_t){K_existed, K_value}},
+            {'L', (lc_gcode_g_command_attr_t){L_existed, L_value}},
+            {'N', (lc_gcode_g_command_attr_t){N_existed, N_value}},
+            {'P', (lc_gcode_g_command_attr_t){P_existed, P_value}},
+            {'R', (lc_gcode_g_command_attr_t){R_existed, R_value}},
+            {'S', (lc_gcode_g_command_attr_t){S_existed, S_value}},
+            {'T', (lc_gcode_g_command_attr_t){T_existed, T_value}},
+        };
 
         for (auto pair : parsed_gcode_tag_map)
         {
@@ -96,13 +134,27 @@ protected:
                     lc_gcode_get_command_number(parsed_gcode),
                     lc_gcode_get_sub_command_existed(parsed_gcode) ? (" and subcommand " + std::to_string(lc_gcode_get_sub_command_number(parsed_gcode))).c_str() : "");
 
+        float R_value = 0;
+        bool R_existed = lc_gcode_m_command_get_attr_R(parsed_gcode, &R_value);
+
+        float Q_value = 0;
+        bool Q_existed = lc_gcode_m_command_get_attr_Q(parsed_gcode, &Q_value);
+
+        float P_value = 0;
+        bool P_existed = lc_gcode_m_command_get_attr_P(parsed_gcode, &P_value);
+
+        float E_value = 0;
+        bool E_existed = lc_gcode_m_command_get_attr_E(parsed_gcode, &E_value);
+
+        float L_value = 0;
+        bool L_existed = lc_gcode_m_command_get_attr_L(parsed_gcode, &L_value);
+
         std::vector<std::pair<const char, lc_gcode_m_command_attr_t>> parsed_gcode_tag_map = {
-            {'R', ((lc_gcode_m_command_t *)parsed_gcode)->R},
-            {'Q', ((lc_gcode_m_command_t *)parsed_gcode)->Q},
-            {'P', ((lc_gcode_m_command_t *)parsed_gcode)->P},
-            {'E', ((lc_gcode_m_command_t *)parsed_gcode)->E},
-            {'L', ((lc_gcode_m_command_t *)parsed_gcode)->L}
-            };
+            {'R', (lc_gcode_m_command_attr_t){R_existed, R_value}},
+            {'Q', (lc_gcode_m_command_attr_t){Q_existed, Q_value}},
+            {'P', (lc_gcode_m_command_attr_t){P_existed, P_value}},
+            {'E', (lc_gcode_m_command_attr_t){E_existed, E_value}},
+            {'L', (lc_gcode_m_command_attr_t){L_existed, L_value}}};
 
         for (auto pair : parsed_gcode_tag_map)
         {
