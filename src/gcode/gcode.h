@@ -6,11 +6,14 @@
 #include "g_command.h"
 #include "m_command.h"
 
+typedef void (*lc_gcode_user_handler_cb_t)(const lc_gcode_obj_t *);
+
 void lc_gcode_init();
 void lc_gcode_deinit();
 bool lc_gcode_get_initialized();
 
 bool lc_gcode_set_end_of_file();
+void lc_gcode_set_handler_callback(lc_gcode_user_handler_cb_t cb);
 
 bool lc_gcode_process_line(const char *line, size_t line_num);
 
