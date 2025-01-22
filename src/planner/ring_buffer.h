@@ -4,6 +4,8 @@
 #include "common_defs.h"
 #include "gcode/gcode.h"
 
+#define LC_PLANNER_GCODE_RB_BUFFER_SIZE 20
+
 typedef union lc_planner_rb_buffer_gcode_union_t
 {
     lc_gcode_obj_t fcommand_gcode_obj;

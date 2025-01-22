@@ -51,9 +51,15 @@ TEST_F(LCPlannerRB, insert_remove)
     m_command_obj.E = {.existed = true, .value = 123};
     m_command_obj.R = {.existed = true, .value = 321};
 
-    lc_planner_rb_insert(mRinfBuffer, &base_gcode_obj);
-    lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&g_command_obj);
-    lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj);
+    EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, &base_gcode_obj), true);
+    EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&g_command_obj), true);
+    EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj), true);
+
+    for(uint8_t element=0; element <= LC_PLANNER_GCODE_RB_BUFFER_SIZE - 4; element++)
+        EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj), true);
+
+    // ring buffer is full
+    EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj), false);
 
     lc_gcode_obj_t rb_f_command;
     lc_planner_rb_remove(mRinfBuffer, &rb_f_command);
@@ -65,5 +71,7 @@ TEST_F(LCPlannerRB, insert_remove)
 
     lc_gcode_m_command_t rb_m_command;
     lc_planner_rb_remove(mRinfBuffer, (lc_gcode_obj_t *) &rb_m_command);
-    EXPECT_EQ(memcmp(&rb_m_command, &m_command_obj, sizeof(lc_gcode_m_command_t)), 0);    
+    EXPECT_EQ(memcmp(&rb_m_command, &m_command_obj, sizeof(lc_gcode_m_command_t)), 0);
+
+    EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&base_gcode_obj), true);
 }

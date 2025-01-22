@@ -1,8 +1,6 @@
 #include <string.h>
 #include "ring_buffer.h"
 
-#define LC_PLANNER_GCODE_RB_BUFFER_SIZE 20
-
 struct lc_planner_rb_st
 {
     lc_planner_rb_buffer_gcode_t buffer[LC_PLANNER_GCODE_RB_BUFFER_SIZE];
