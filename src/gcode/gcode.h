@@ -5,6 +5,7 @@
 #include "gcode_base_obj.h"
 #include "g_command.h"
 #include "m_command.h"
+#include "parameter.h"
 
 typedef void (*lc_gcode_user_handler_cb_t)(const lc_gcode_obj_t *);
 
