@@ -1,7 +1,8 @@
 #include "parameter.h"
 
-#if LC_GCODE_PARAMETER_SUPPORT
+#include "parameter.h"
 
+#if LC_GCODE_PARAMETER_SUPPORT
 #include "config/config.h"
 
 static bool initialized = false;
@@ -17,6 +18,8 @@ static inline lc_gcode_parameter_res_type_t check_parameter_range(uint16_t id)
     default:
         break;
     }
+
+    return res;
 }
 
 void lc_gcode_parameter_init()
@@ -52,9 +55,11 @@ lc_gcode_parameter_res_type_t lc_gcode_parameter_named_set(const char *name, flo
 bool lc_gcode_parameter_named_get(const char *name, float *value)
 {
     CHECK_INITIALIIZED
+
+    return lc_config_get_float(LC_CONFIG_KEY_STRING(name), value);
 }
 
-lc_gcode_parameter_res_type_t lc_gcode_parameter_numeric_set(int id, float value)
+lc_gcode_parameter_res_type_t lc_gcode_parameter_numeric_set(uint16_t id, float value)
 {
     CHECK_INITIALIIZED
 
@@ -62,7 +67,7 @@ lc_gcode_parameter_res_type_t lc_gcode_parameter_numeric_set(int id, float value
     if(range_ckeck != LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS)
         return range_ckeck;
 
-    lc_config_set_float(LC_CONFIG_KEY_INT(&id), value);
+    lc_config_set_float(LC_CONFIG_KEY_INT(id), value);
 
     return LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS;
 }
@@ -70,6 +75,7 @@ lc_gcode_parameter_res_type_t lc_gcode_parameter_numeric_set(int id, float value
 bool lc_gcode_parameter_numeric_get(uint16_t id, float *value)
 {
     CHECK_INITIALIIZED
+    return lc_config_get_float(LC_CONFIG_KEY_INT(id), value);
 }
 
 #endif
