@@ -24,7 +24,7 @@ typedef struct
 #define LC_CONFIG_KEY_BIN(conf_key, conf_key_size)                   \
   (lc_config_key_t)                                                  \
   {                                                                  \
-    .key = (void *)conf_key,                                         \
+    .key = (void *)(uintptr_t)conf_key,                                         \
     .key_size = MIN(conf_key_size, LC_CONFIG_STRING_KEY_MAX_LENTGH)  \
   }
 
