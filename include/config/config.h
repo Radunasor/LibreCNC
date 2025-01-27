@@ -8,8 +8,29 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <string.h>
+
 #include "config_keys.h"
 #include "common_defs.h"
+
+#define LC_CONFIG_STRING_KEY_MAX_LENTGH 128
+
+typedef struct
+{
+  void *key;
+  size_t key_size;
+} lc_config_key_t;
+
+#define LC_CONFIG_KEY_BIN(conf_key, conf_key_size)                   \
+  (lc_config_key_t)                                                  \
+  {                                                                  \
+    .key = (void *)conf_key,                                         \
+    .key_size = MIN(conf_key_size, LC_CONFIG_STRING_KEY_MAX_LENTGH)  \
+  }
+
+#define LC_CONFIG_KEY_INT(conf_key) LC_CONFIG_KEY_BIN(conf_key, sizeof(conf_key))
+
+#define LC_CONFIG_KEY_STRING(conf_key) LC_CONFIG_KEY_BIN(conf_key, strlen(conf_key) + 1)
 
 /**
  * @brief Initializes the configuration module.
