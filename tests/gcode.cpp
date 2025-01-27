@@ -203,7 +203,7 @@ TEST_F(LCGcode, initial_t)
 }
 
 #ifdef LC_GCODE_PARAMETER_SUPPORT
-TEST_F(LCGcode, set_param_named)
+TEST_F(LCGcode, set_get_param_named)
 {
     #define NAMED_PARAM_ID "named_param_1"
     float named_param_1_value = 1.1234f;
@@ -216,13 +216,13 @@ TEST_F(LCGcode, set_param_named)
     EXPECT_EQ(named_param_1, named_param_1_value);
 }
 
-TEST_F(LCGcode, set_param_numbered)
+TEST_F(LCGcode, set_get_param_numbered)
 {
     #define NUMBERED_PARAM_ID 321
     float numbered_param_1_value = 1.1234f;
     float numbered_param_1 = 0;
     EXPECT_NE(lc_gcode_parameter_numeric_set(1, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); // not in desired user config range
-    EXPECT_EQ(lc_gcode_parameter_numeric_set(NUMBERED_PARAM_ID, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); // 
+    EXPECT_EQ(lc_gcode_parameter_numeric_set(NUMBERED_PARAM_ID, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); 
 
     EXPECT_EQ(lc_gcode_parameter_numeric_get(123, &numbered_param_1), false);
     EXPECT_EQ(lc_gcode_parameter_numeric_get(NUMBERED_PARAM_ID, &numbered_param_1), true);
