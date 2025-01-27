@@ -54,28 +54,28 @@ void lc_config_set_bool(lc_config_key_t key, const bool value)
 {
     CHECK_INITIALIIZED
 
-    lc_map_insert(config_map, &key, sizeof(lc_config_key_t), (void *)&value, sizeof(bool));
+    lc_map_insert(config_map, &key.key, key.key_size, (void *)&value, sizeof(bool));
 }
 
 void lc_config_set_int(lc_config_key_t key, const int value)
 {
     CHECK_INITIALIIZED
 
-    lc_map_insert(config_map, &key, sizeof(lc_config_key_t), (void *)&value, sizeof(int));
+    lc_map_insert(config_map, &key.key, key.key_size, (void *)&value, sizeof(int));
 }
 
 void lc_config_set_float(lc_config_key_t key, const float value)
 {
     CHECK_INITIALIIZED
 
-    lc_map_insert(config_map, &key, sizeof(lc_config_key_t), (void *)&value, sizeof(float));
+    lc_map_insert(config_map, &key.key, key.key_size, (void *)&value, sizeof(float));
 }
 
 void lc_config_set_data(lc_config_key_t key, const uint8_t *data, const size_t data_size)
 {
     CHECK_INITIALIIZED
 
-    lc_map_insert(config_map, &key, sizeof(lc_config_key_t), (void *)data, data_size);
+    lc_map_insert(config_map, &key.key, key.key_size, (void *)data, data_size);
 }
 
 bool lc_config_get_bool(lc_config_key_t key, bool *value)
@@ -86,7 +86,7 @@ bool lc_config_get_bool(lc_config_key_t key, bool *value)
 
     bool *tmp_val = NULL;
 
-    bool res = lc_map_find(config_map, &key, sizeof(lc_config_key_t), (void **)&tmp_val, &output_size);
+    bool res = lc_map_find(config_map, &key.key, key.key_size, (void **)&tmp_val, &output_size);
 
     if (res)
         *value = *tmp_val;
@@ -101,7 +101,7 @@ bool lc_config_get_int(lc_config_key_t key, int *value)
     size_t output_size = 0;
     int *tmp_val = NULL;
 
-    bool res = lc_map_find(config_map, &key, sizeof(lc_config_key_t), (void **)&tmp_val, &output_size);
+    bool res = lc_map_find(config_map, &key.key, key.key_size, (void **)&tmp_val, &output_size);
     if (res)
         *value = *tmp_val;
 
@@ -116,7 +116,7 @@ bool lc_config_get_float(lc_config_key_t key, float *value)
 
     float *tmp_val = NULL;
 
-    bool res = lc_map_find(config_map, &key, sizeof(lc_config_key_t), (void **)&tmp_val, &output_size);
+    bool res = lc_map_find(config_map, &key.key, key.key_size, (void **)&tmp_val, &output_size);
     if (res)
         *value = *tmp_val;
 
@@ -127,7 +127,7 @@ bool lc_config_get_data(lc_config_key_t key, uint8_t **value, size_t *data_size)
 {
     CHECK_INITIALIIZED
 
-    return lc_map_find(config_map, &key, sizeof(lc_config_key_t), (void **)value, data_size);
+    return lc_map_find(config_map, &key.key, key.key_size, (void **)value, data_size);
 }
 
 /******************************************************/

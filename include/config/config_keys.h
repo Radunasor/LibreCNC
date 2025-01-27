@@ -34,6 +34,6 @@ typedef enum
     LC_CONFIG_KEY_HOMING_PULLOFF,
 
     LC_CONFIG_KEY_LAST
-} lc_config_key_t;
+} lc_config_default_key_t;
 
 #endif
