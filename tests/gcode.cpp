@@ -4,6 +4,7 @@
 extern "C"
 {
 #include "gcode/gcode.h"
+#include "config/config.h"
 }
 
 bool lc_interface_gcode_init()
@@ -54,11 +55,17 @@ class LCGcode : public ::testing::Test
 protected:
     void SetUp() override
     {
+        #ifdef LC_GCODE_PARAMETER_SUPPORT
+        lc_config_init();
+        #endif
         lc_gcode_init();
     }
 
     void TearDown() override
     {
+        #ifdef LC_GCODE_PARAMETER_SUPPORT
+        lc_config_deinit();
+        #endif
         lc_gcode_deinit();
     }
 
@@ -194,3 +201,32 @@ TEST_F(LCGcode, initial_t)
             LC_LOG_ERROR("GCODE module couldn't parse last line, need to take some action");
     }
 }
+
+#ifdef LC_GCODE_PARAMETER_SUPPORT
+TEST_F(LCGcode, set_param_named)
+{
+    #define NAMED_PARAM_ID "named_param_1"
+    float named_param_1_value = 1.1234f;
+    float named_param_1 = 0;
+    lc_gcode_parameter_named_set(NAMED_PARAM_ID, named_param_1_value);
+
+    EXPECT_EQ(lc_gcode_parameter_named_get("named_param_2", &named_param_1), false);
+    EXPECT_EQ(lc_gcode_parameter_named_get(NAMED_PARAM_ID, &named_param_1), true);
+
+    EXPECT_EQ(named_param_1, named_param_1_value);
+}
+
+TEST_F(LCGcode, set_param_numbered)
+{
+    #define NUMBERED_PARAM_ID 321
+    float numbered_param_1_value = 1.1234f;
+    float numbered_param_1 = 0;
+    EXPECT_NE(lc_gcode_parameter_numeric_set(1, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); // not in desired user config range
+    EXPECT_EQ(lc_gcode_parameter_numeric_set(NUMBERED_PARAM_ID, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); // 
+
+    EXPECT_EQ(lc_gcode_parameter_numeric_get(123, &numbered_param_1), false);
+    EXPECT_EQ(lc_gcode_parameter_numeric_get(NUMBERED_PARAM_ID, &numbered_param_1), true);
+
+    EXPECT_EQ(numbered_param_1, numbered_param_1_value);
+}
+#endif
