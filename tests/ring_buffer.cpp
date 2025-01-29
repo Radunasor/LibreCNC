@@ -3,7 +3,7 @@
 
 extern "C"
 {
-#include "gcode/gcode.h" 
+#include "gcode/gcode.h"
 #include "planner/ring_buffer.h"
 }
 
@@ -55,7 +55,7 @@ TEST_F(LCPlannerRB, insert_remove)
     EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&g_command_obj), true);
     EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj), true);
 
-    for(uint8_t element=0; element <= LC_PLANNER_GCODE_RB_BUFFER_SIZE - 4; element++)
+    for (uint8_t element = 0; element <= LC_PLANNER_GCODE_RB_BUFFER_SIZE - 4; element++)
         EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&m_command_obj), true);
 
     // ring buffer is full
@@ -66,11 +66,11 @@ TEST_F(LCPlannerRB, insert_remove)
     EXPECT_EQ(memcmp(&rb_f_command, &base_gcode_obj, sizeof(lc_gcode_obj_t)), 0);
 
     lc_gcode_g_command_t rb_g_command;
-    lc_planner_rb_remove(mRinfBuffer, (lc_gcode_obj_t *) &rb_g_command);
+    lc_planner_rb_remove(mRinfBuffer, (lc_gcode_obj_t *)&rb_g_command);
     EXPECT_EQ(memcmp(&rb_g_command, &g_command_obj, sizeof(lc_gcode_g_command_t)), 0);
 
     lc_gcode_m_command_t rb_m_command;
-    lc_planner_rb_remove(mRinfBuffer, (lc_gcode_obj_t *) &rb_m_command);
+    lc_planner_rb_remove(mRinfBuffer, (lc_gcode_obj_t *)&rb_m_command);
     EXPECT_EQ(memcmp(&rb_m_command, &m_command_obj, sizeof(lc_gcode_m_command_t)), 0);
 
     EXPECT_EQ(lc_planner_rb_insert(mRinfBuffer, (lc_gcode_obj_t *)&base_gcode_obj), true);

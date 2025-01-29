@@ -11,7 +11,7 @@ typedef union lc_planner_rb_buffer_gcode_union_t
     lc_gcode_obj_t fcommand_gcode_obj;
     lc_gcode_g_command_t gcommand_gcode_obj;
     lc_gcode_m_command_t mcommand_gcode_obj;
-}lc_planner_rb_buffer_gcode_t;
+} lc_planner_rb_buffer_gcode_t;
 
 typedef struct lc_planner_rb_st lc_planner_rb_t;
 

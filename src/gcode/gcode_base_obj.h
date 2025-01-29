@@ -8,9 +8,9 @@
 typedef enum lc_gcode_command_type_st
 {
     LC_GCODE_TYPE_NONE = 0,
-#ifdef LC_SUPPORT_O_COMMANDS    
+#ifdef LC_SUPPORT_O_COMMANDS
     LC_GCODE_TYPE_O = 'O',
-#endif    
+#endif
     LC_GCODE_TYPE_G = 'G',
     LC_GCODE_TYPE_M = 'M',
     LC_GCODE_TYPE_F = 'F',
@@ -22,7 +22,7 @@ typedef struct lc_gcode_obj_st
     uint32_t command_number;
     bool subcommand_existed;
     uint16_t sub_command_number;
-}lc_gcode_obj_t;
+} lc_gcode_obj_t;
 
 typedef struct lc_gcode_command_attr_st
 {

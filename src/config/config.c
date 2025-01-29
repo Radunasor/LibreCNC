@@ -19,7 +19,7 @@ void lc_config_init()
 
     config_map = lc_map_create();
 
-    if(config_map)
+    if (config_map)
         initialized = true;
 }
 

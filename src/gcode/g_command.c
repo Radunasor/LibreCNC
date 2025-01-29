@@ -11,10 +11,10 @@ bool lc_gcode_g_command_extract_values(lc_gcode_g_command_t *g_command, const ch
         const char tag;
         lc_gcode_command_attr_t *attr;
     } lc_gcode_parser_tag_map[] = {
-        #define LC_GCODE_G_COMMAND_FIELD(attr) {#attr[0],  &g_command->attr},
-        LC_GCODE_G_COMMAND_SUPPORTED_FIELDS 
-        #undef LC_GCODE_G_COMMAND_FIELD
-        
+#define LC_GCODE_G_COMMAND_FIELD(attr) {#attr[0], &g_command->attr},
+        LC_GCODE_G_COMMAND_SUPPORTED_FIELDS
+#undef LC_GCODE_G_COMMAND_FIELD
+
         {'\0', NULL},
     };
 
