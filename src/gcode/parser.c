@@ -16,7 +16,7 @@ void lc_gcode_parser_mark_comments(char *line)
 
     char *comment_pos = strpbrk(line, comments_chars);
 
-    if(comment_pos)
+    if (comment_pos)
         *comment_pos = '\0';
 }
 
@@ -27,9 +27,9 @@ bool lc_gcode_parser_get_value(const char *line, const char tag, bool *existed, 
 
     const char *end_ptr = lc_gcode_parser_get_tag_val(line, tag, existed, value);
 
-    if(*existed && !end_ptr)
+    if (*existed && !end_ptr)
         return false;
-    
+
     return true;
 }
 
@@ -43,7 +43,7 @@ bool lc_gcode_parser_get_command(const char **line,
     if (line == NULL)
         return false;
 
-    if(!command_type)
+    if (!command_type)
         return false;
 
     float command_val = 0.0f;
@@ -51,7 +51,7 @@ bool lc_gcode_parser_get_command(const char **line,
 
     char *end_ptr = lc_gcode_parser_get_tag_val(*line, command_type, command_existed, &command_val);
 
-    if(*command_existed && !end_ptr)
+    if (*command_existed && !end_ptr)
         return false;
 
     *command = (uint32_t)command_val;

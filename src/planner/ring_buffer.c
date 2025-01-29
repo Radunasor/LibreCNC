@@ -67,17 +67,17 @@ bool lc_planner_rb_remove(lc_planner_rb_t *rb, lc_gcode_obj_t *gcode_obj)
         break;
     case LC_GCODE_TYPE_M:
         obj_size = sizeof(lc_gcode_m_command_t);
-        break;        
-#ifdef LC_SUPPORT_O_COMMANDS       
+        break;
+#ifdef LC_SUPPORT_O_COMMANDS
     case LC_GCODE_TYPE_O:
         // obj_size = sizeof(lc_gcode_o_command_t);
-        break;        
-#endif        
+        break;
+#endif
     default:
         break;
     }
 
-    if(!obj_size)
+    if (!obj_size)
         return false;
 
     memcpy(gcode_obj, buffer_obj, obj_size);

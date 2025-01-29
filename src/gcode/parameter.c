@@ -3,6 +3,7 @@
 #include "parameter.h"
 
 #if LC_GCODE_PARAMETER_SUPPORT
+
 #include "config/config.h"
 
 static bool initialized = false;
@@ -24,17 +25,17 @@ static inline lc_gcode_parameter_res_type_t check_parameter_range(uint16_t id)
 
 void lc_gcode_parameter_init()
 {
-    if(!lc_config_get_initialized() || initialized)
+    if (!lc_config_get_initialized() || initialized)
         return;
-    
+
     initialized = true;
 }
 
 void lc_gcode_parameter_deinit()
 {
-    if(!initialized)
+    if (!initialized)
         return;
-    
+
     initialized = false;
 }
 
@@ -64,7 +65,7 @@ lc_gcode_parameter_res_type_t lc_gcode_parameter_numeric_set(uint16_t id, float 
     CHECK_INITIALIIZED
 
     lc_gcode_parameter_res_type_t range_ckeck = check_parameter_range(id);
-    if(range_ckeck != LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS)
+    if (range_ckeck != LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS)
         return range_ckeck;
 
     lc_config_set_float(LC_CONFIG_KEY_INT(id), value);

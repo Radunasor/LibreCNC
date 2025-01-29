@@ -8,25 +8,25 @@
 typedef struct lc_gcode_g_command_st lc_gcode_g_command_t;
 
 #define LC_GCODE_G_COMMAND_SUPPORTED_FIELDS \
-    LC_GCODE_G_COMMAND_FIELD(X) \
-    LC_GCODE_G_COMMAND_FIELD(Y) \
-    LC_GCODE_G_COMMAND_FIELD(Z) \
-    LC_GCODE_G_COMMAND_FIELD(I) \
-    LC_GCODE_G_COMMAND_FIELD(J) \
-    LC_GCODE_G_COMMAND_FIELD(K) \
-    LC_GCODE_G_COMMAND_FIELD(L) \
-    LC_GCODE_G_COMMAND_FIELD(N) \
-    LC_GCODE_G_COMMAND_FIELD(P) \
-    LC_GCODE_G_COMMAND_FIELD(R) \
-    LC_GCODE_G_COMMAND_FIELD(S) \
+    LC_GCODE_G_COMMAND_FIELD(X)             \
+    LC_GCODE_G_COMMAND_FIELD(Y)             \
+    LC_GCODE_G_COMMAND_FIELD(Z)             \
+    LC_GCODE_G_COMMAND_FIELD(I)             \
+    LC_GCODE_G_COMMAND_FIELD(J)             \
+    LC_GCODE_G_COMMAND_FIELD(K)             \
+    LC_GCODE_G_COMMAND_FIELD(L)             \
+    LC_GCODE_G_COMMAND_FIELD(N)             \
+    LC_GCODE_G_COMMAND_FIELD(P)             \
+    LC_GCODE_G_COMMAND_FIELD(R)             \
+    LC_GCODE_G_COMMAND_FIELD(S)             \
     LC_GCODE_G_COMMAND_FIELD(T)
 
 struct lc_gcode_g_command_st
 {
     lc_gcode_obj_t command;
-    #define LC_GCODE_G_COMMAND_FIELD(attr) lc_gcode_command_attr_t attr;
+#define LC_GCODE_G_COMMAND_FIELD(attr) lc_gcode_command_attr_t attr;
     LC_GCODE_G_COMMAND_SUPPORTED_FIELDS
-    #undef LC_GCODE_G_COMMAND_FIELD
+#undef LC_GCODE_G_COMMAND_FIELD
 };
 
 // will add accessor func named lc_gcode_g_command_get_attr_X/Y/Z...()

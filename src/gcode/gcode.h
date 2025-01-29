@@ -18,7 +18,8 @@ void lc_gcode_set_handler_callback(lc_gcode_user_handler_cb_t cb);
 
 bool lc_gcode_process_line(const char *line, size_t line_num);
 
-lc_gcode_command_type_t inline lc_gcode_get_command_type(const lc_gcode_obj_t *gcode_obj){
+lc_gcode_command_type_t inline lc_gcode_get_command_type(const lc_gcode_obj_t *gcode_obj)
+{
     LC_ASSERT(gcode_obj, "gcode obj can't be a NULL pointer!");
     return gcode_obj->command_type;
 }
@@ -33,7 +34,7 @@ uint32_t inline lc_gcode_get_command_number(const lc_gcode_obj_t *gcode_obj)
 bool inline lc_gcode_get_sub_command_existed(const lc_gcode_obj_t *gcode_obj)
 {
     LC_ASSERT(gcode_obj, "gcode obj can't be a NULL pointer!");
-    
+
     return gcode_obj->subcommand_existed;
 }
 

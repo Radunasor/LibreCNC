@@ -9,9 +9,9 @@ bool lc_gcode_m_command_handle_attributes(lc_gcode_m_command_t *m_command, const
         const char tag;
         lc_gcode_command_attr_t *attr;
     } lc_gcode_parser_tag_map[] = {
-        #define LC_GCODE_M_COMMAND_FIELD(attr) {#attr[0],  &m_command->attr},
-        LC_GCODE_M_COMMAND_SUPPORTED_FIELDS 
-        #undef LC_GCODE_M_COMMAND_FIELD
+#define LC_GCODE_M_COMMAND_FIELD(attr) {#attr[0], &m_command->attr},
+        LC_GCODE_M_COMMAND_SUPPORTED_FIELDS
+#undef LC_GCODE_M_COMMAND_FIELD
 
         {'\0', NULL},
     };

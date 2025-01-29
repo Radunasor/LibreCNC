@@ -30,7 +30,7 @@ void lc_gcode_init()
 #ifdef LC_GCODE_PARAMETER_SUPPORT
     lc_gcode_parameter_init();
 
-    if(!lc_gcode_parameter_get_initialized())
+    if (!lc_gcode_parameter_get_initialized())
         return;
 #endif
 
@@ -45,7 +45,7 @@ void lc_gcode_deinit()
 #ifdef LC_GCODE_PARAMETER_SUPPORT
     lc_gcode_parameter_deinit();
 
-    if(lc_gcode_parameter_get_initialized())
+    if (lc_gcode_parameter_get_initialized())
         return;
 #endif
 

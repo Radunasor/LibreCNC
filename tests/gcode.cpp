@@ -55,17 +55,17 @@ class LCGcode : public ::testing::Test
 protected:
     void SetUp() override
     {
-        #ifdef LC_GCODE_PARAMETER_SUPPORT
+#ifdef LC_GCODE_PARAMETER_SUPPORT
         lc_config_init();
-        #endif
+#endif
         lc_gcode_init();
     }
 
     void TearDown() override
     {
-        #ifdef LC_GCODE_PARAMETER_SUPPORT
+#ifdef LC_GCODE_PARAMETER_SUPPORT
         lc_config_deinit();
-        #endif
+#endif
         lc_gcode_deinit();
     }
 
@@ -178,7 +178,7 @@ protected:
             break;
         }
 
-        for (auto pair :parsed_code_attr_map)
+        for (auto pair : parsed_code_attr_map)
         {
             if (pair.second.existed)
                 LC_LOG_INFO("%c=%f", pair.first, pair.second.value);
@@ -205,7 +205,7 @@ TEST_F(LCGcode, initial_t)
 #ifdef LC_GCODE_PARAMETER_SUPPORT
 TEST_F(LCGcode, set_get_param_named)
 {
-    #define NAMED_PARAM_ID "named_param_1"
+#define NAMED_PARAM_ID "named_param_1"
     float named_param_1_value = 1.1234f;
     float named_param_1 = 0;
     lc_gcode_parameter_named_set(NAMED_PARAM_ID, named_param_1_value);
@@ -218,11 +218,11 @@ TEST_F(LCGcode, set_get_param_named)
 
 TEST_F(LCGcode, set_get_param_numbered)
 {
-    #define NUMBERED_PARAM_ID 321
+#define NUMBERED_PARAM_ID 321
     float numbered_param_1_value = 1.1234f;
     float numbered_param_1 = 0;
     EXPECT_NE(lc_gcode_parameter_numeric_set(1, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); // not in desired user config range
-    EXPECT_EQ(lc_gcode_parameter_numeric_set(NUMBERED_PARAM_ID, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS); 
+    EXPECT_EQ(lc_gcode_parameter_numeric_set(NUMBERED_PARAM_ID, numbered_param_1_value), LC_GCODE_PARAMETERS_RES_TYPE_SUCCESS);
 
     EXPECT_EQ(lc_gcode_parameter_numeric_get(123, &numbered_param_1), false);
     EXPECT_EQ(lc_gcode_parameter_numeric_get(NUMBERED_PARAM_ID, &numbered_param_1), true);
