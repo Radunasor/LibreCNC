@@ -46,9 +46,11 @@ void lc_gcode_parameter_deinit()
     if (!initialized)
         return;
 
-    for (uint8_t i = 0; i < LC_GCODE_PARAMETER_SCOPE_GLOBAL; i++)
+    for (uint8_t i = 0; i < LC_GCODE_PARAMETER_SCOPE_DEPTH; i++)
     {
-        lc_map_destroy(scope_stack.stack[i].var_map);
+        if (scope_stack.stack[i].var_map)
+            lc_map_destroy(scope_stack.stack[i].var_map);
+
         scope_stack.stack[i].var_map = NULL;
         scope_stack.stack[i].scope = 0;
     }
