@@ -229,4 +229,74 @@ TEST_F(LCGcode, set_get_param_numbered)
 
     EXPECT_EQ(numbered_param_1, numbered_param_1_value);
 }
+
+TEST_F(LCGcode, push_pop_scope)
+{
+    uint16_t scope_global = LC_GCODE_PARAMETER_SCOPE_GLOBAL;
+    float param_scope_global = 0;
+    float param_scope_global_res = -1;
+
+    uint16_t scope_1 = 1;
+    float param_scope_1 = 1;
+    float param_scope_1_res = -1;
+
+    uint16_t scope_2 = 2;
+    float param_scope_2 = 2;
+    float param_scope_2_res = -1;
+
+    uint16_t scope_3 = 3;
+    float param_scope_3 = 3;
+    float param_scope_3_res = -1;
+
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 1);
+
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // never pop the global scope
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 1);
+
+    lc_gcode_parameter_named_set("param_scope_global", param_scope_global);
+
+    lc_gcode_paramater_scope_push(scope_1);
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 2);
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope(), scope_1);
+
+    lc_gcode_parameter_named_set("param_scope_1", param_scope_1);
+
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_global", &param_scope_1_res), true);
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_1", &param_scope_global_res), true);
+    EXPECT_EQ(param_scope_1_res, param_scope_global);
+    EXPECT_EQ(param_scope_global_res, param_scope_1);
+
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_1);
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0);
+
+    param_scope_1_res = -1;
+    param_scope_global_res = -1;
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_global", &param_scope_global_res), true);
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_1", &param_scope_1_res), false);
+    EXPECT_EQ(param_scope_1_res, -1);
+    EXPECT_EQ(param_scope_global_res, param_scope_global);
+
+    EXPECT_EQ(lc_gcode_paramater_scope_push(scope_1), true);
+    EXPECT_EQ(lc_gcode_paramater_scope_push(scope_2), true);
+    EXPECT_EQ(lc_gcode_paramater_scope_push(scope_3), true);
+    EXPECT_EQ(lc_gcode_paramater_scope_push(scope_2), false); // stack overflow
+
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 4);
+    EXPECT_EQ(lc_gcode_paramater_get_current_scope(), scope_3);
+
+    param_scope_global_res = -1;
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_global", &param_scope_global_res), true);
+    EXPECT_EQ(param_scope_global_res, param_scope_global);
+
+    lc_gcode_parameter_named_set("param_scope_3", param_scope_3);
+    EXPECT_EQ(lc_gcode_parameter_named_get("param_scope_3", &param_scope_3_res), true);
+    EXPECT_EQ(param_scope_3_res, param_scope_3);
+
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_3);
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_2);
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_1);
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // get to global scope
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // never pop the global scope
+}
+
 #endif
