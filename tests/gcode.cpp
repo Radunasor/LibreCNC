@@ -250,7 +250,7 @@ TEST_F(LCGcode, push_pop_scope)
 
     EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 1);
 
-    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // never pop the global scope
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), LC_GCODE_PARAMETER_SCOPE_GLOBAL); // never pop the global scope
     EXPECT_EQ(lc_gcode_paramater_get_current_scope_depth(), 1);
 
     lc_gcode_parameter_named_set("param_scope_global", param_scope_global);
@@ -267,7 +267,7 @@ TEST_F(LCGcode, push_pop_scope)
     EXPECT_EQ(param_scope_global_res, param_scope_1);
 
     EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_1);
-    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0);
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), LC_GCODE_PARAMETER_SCOPE_GLOBAL);
 
     param_scope_1_res = -1;
     param_scope_global_res = -1;
@@ -295,8 +295,8 @@ TEST_F(LCGcode, push_pop_scope)
     EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_3);
     EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_2);
     EXPECT_EQ(lc_gcode_paramater_scope_pop(), scope_1);
-    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // get to global scope
-    EXPECT_EQ(lc_gcode_paramater_scope_pop(), 0); // never pop the global scope
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), LC_GCODE_PARAMETER_SCOPE_GLOBAL); // get to global scope
+    EXPECT_EQ(lc_gcode_paramater_scope_pop(), LC_GCODE_PARAMETER_SCOPE_GLOBAL); // never pop the global scope
 }
 
 #endif
