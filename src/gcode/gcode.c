@@ -27,7 +27,7 @@ void lc_gcode_init()
     if (initialized)
         return;
 
-#ifdef LC_GCODE_PARAMETER_SUPPORT
+#if LC_GCODE_PARAMETER_SUPPORT
     lc_gcode_parameter_init();
 
     if (!lc_gcode_parameter_get_initialized())
@@ -42,7 +42,7 @@ void lc_gcode_deinit()
     if (!initialized)
         return;
 
-#ifdef LC_GCODE_PARAMETER_SUPPORT
+#if LC_GCODE_PARAMETER_SUPPORT
     lc_gcode_parameter_deinit();
 
     if (lc_gcode_parameter_get_initialized())
@@ -89,7 +89,7 @@ static bool lc_gcode_parse_line(char *line, size_t line_num)
     lc_gcode_parser_mark_comments(line);
 
     lc_gcode_command_type_t lc_gcode_command_type_arr[] = {
-#ifdef LC_SUPPORT_O_COMMANDS
+#if LC_SUPPORT_O_COMMANDS
         LC_GCODE_TYPE_O,
 #endif
         LC_GCODE_TYPE_F,
